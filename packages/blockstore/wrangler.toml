@@ -1,0 +1,14 @@
+name = "blockstore_service"
+main = "build/worker/shim.mjs"
+# compatibility_date = "2022-01-20"
+compatibility_date = "2022-09-12" # required
+compatibility_flags = ["streams_enable_constructors"]
+workers_dev = true
+
+[vars]
+WORKERS_RS_VERSION = "0.0.16"
+
+[[r2_buckets]]
+binding = 'BLOCKSTORE'
+bucket_name = 'blockstore'
+preview_bucket_name = 'blockstore'

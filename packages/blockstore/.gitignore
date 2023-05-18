@@ -1,0 +1,7 @@
+.env*
+.dev.vars
+.wrangler
+target/
+build/
+node_modules/
+```

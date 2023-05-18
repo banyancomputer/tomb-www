@@ -1,0 +1,12 @@
+.DS_Store
+/node_modules
+
+*.var
+serviceAccount.json
+
+**/*.rs.bk
+wasm-pack.log
+
+build/
+/target
+/dist

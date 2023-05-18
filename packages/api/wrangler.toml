@@ -1,0 +1,8 @@
+name = "auth"
+main = "src/index.js"
+compatibility_date = "2023-05-12"
+compatibility_flags = [ "nodejs_compat" ]
+
+[[services]]
+binding = "blockstore_service"
+service = "blockstore_service"

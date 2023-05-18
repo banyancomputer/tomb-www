@@ -1,0 +1,36 @@
+{
+	"name": "blucket-api",
+	"version": "0.0.0",
+	"description": "Firebase persistent storage for Blucket",
+	"type": "module",
+	"main": "./dist/index.js",
+	"author": "Alex Miller <alex@banyan.computer>",
+	"license": "Apache-2.0 OR MIT",
+	"scripts": {
+		"build": "wrangler build",
+		"dev": "wrangler dev --local",
+		"deploy": "wrangler publish"
+	},
+	"dependencies": {
+		"itty-router": "^2.6.1",
+		"jose": "^4.14.4",
+		"nanoid": "^3.1.30",
+		"node-jose": "^2.2.0"
+	},
+	"devDependencies": {
+		"@cloudflare/workers-types": "^3.14.1",
+		"miniflare": "^2.14.0",
+		"standard": "^17.0.0",
+		"vitest": "^0.31.0"
+	},
+	"standard": {
+		"ignore": [
+			"dist"
+		]
+	},
+	"engines": {
+		"node": "18.x",
+		"npm": ">=7.20.0",
+		"yarn": "please-use-npm"
+	}
+}
