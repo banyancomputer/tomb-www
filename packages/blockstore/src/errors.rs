@@ -4,7 +4,7 @@ pub enum BucketError {
 }
 
 pub enum BlockError {
-    BlockTypeNotSpecified,
+    BlockCodecNotSupported,
     BlockExceedsMaxSize,
     BlockNotFound
 }

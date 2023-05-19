@@ -68,8 +68,7 @@ describe("Worker", () => {
 		expect(resp.status).toBe(400);
 	});
 
-	// TODO: This should pass for a 404 error code, but it's not working. We should update the code and this test at some point.
-	it("should fail with 403 error code for including valid authorization, but non-extant bucketId", async () => {
+	it("should fail with 404 error code for including valid authorization, but non-extant bucketId", async () => {
 		const resp = await api.fetch('', {
 			headers: {
 				...util.getAuthHeader(),
@@ -77,7 +76,7 @@ describe("Worker", () => {
 			},
 		});
 		expect(resp).toBeDefined();
-		expect(resp.status).toBe(403);
+		expect(resp.status).toBe(404);
 	});
 
 	it("should fail with a 403 error code for including valid authorization, but a bucketId that the user does not have access to", async () => {

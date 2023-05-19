@@ -6,3 +6,8 @@ compatibility_flags = [ "nodejs_compat" ]
 [[services]]
 binding = "blockstore_service"
 service = "blockstore_service"
+
+[[r2_buckets]]
+binding = 'BLOCKSTORE'
+bucket_name = 'blockstore'
+preview_bucket_name = 'blockstore'

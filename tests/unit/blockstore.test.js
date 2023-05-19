@@ -15,66 +15,56 @@ describe("Worker", () => {
 
 	it("should fail for not including a bucket-id in the header", async () => {
         const resp = await blockstore.fetch(`put`, {
-            headers: {
-                ...util.getAuthHeader(),
-            },
             method: "POST",
         });
         expect(resp).toBeDefined();
         expect(resp.status).toBe(400);
 	});
 
-    it("should fail for not including a block-type in the header", async () => {
-        const resp = await blockstore.fetch(`put`, {
-            headers: {
-                ...util.getAuthHeader(),
-                ...util.getBucketIdHeader(),
-            },
-            method: "POST",
-        });
-        expect(resp).toBeDefined();
-        expect(resp.status).toBe(400);
-    });
-
-    it("should fail for including an invalid block-type in the header", async () => {
-        const resp = await blockstore.fetch(`put`, {
+    it("should be able to tell if a bucket is empty", async () => {
+        const resp = await blockstore.fetch(``, {
             headers: {
                 ...util.getBucketIdHeader(),
-                ...util.getBadBlockTypeHeader(),
             },
-        });
+            method: "DELETE",
+        })
         expect(resp).toBeDefined();
-        expect(resp.status).toBe(400);
+        expect(resp.status).toBe(200);
     });
 
-    it("should succeed at putting and getting metadata", async () => {
+    it("should succeed at putting, getting, and removing a RAW block", async () => {
         const data = "Hello, World!";
         const put_resp = await blockstore.fetch(`put`, {
             headers: {
                 ...util.getBucketIdHeader(),
-                ...util.getMetadataBlockTypeHeader(),
             },
             body: data,
             method: 'POST',
         }).then(r => r.json());
         expect(put_resp).toBeDefined();
         const key = put_resp.Key;
-        const resp = await blockstore.fetch(`get?arg=${key}`, {
+        const get_resp = await blockstore.fetch(`get?arg=${key}`, {
             headers: {
                 ...util.getBucketIdHeader(),
-                ...util.getMetadataBlockTypeHeader(),
             },
         }).then(r => r.text());
-        expect(resp).toBeDefined();
-        expect(resp).toBe(data);
-    });
-
-    it("should succeed at putting and getting content", async () => {
-        const data = "Hello, World!";
-        const put_resp = await blockstore.fetch(`put`, {
+        expect(get_resp).toBeDefined();
+        expect(get_resp).toBe(data);
+        const delete_resp = await blockstore.fetch(`rm?arg=${key}`, {
             headers: {
                 ...util.getBucketIdHeader(),
-                ...util.getContentBlockTypeHeader(),
+            },
+            method: 'DELETE',
+        }).then(r => r.json());
+        expect(delete_resp).toBeDefined();
+        expect(delete_resp.Hash).toBe(key);
+    });
+
+    it("should succeed at putting, getting, and removing a DAG-CBOR block", async () => {
+        const data = "Hello, World!";
+        const put_resp = await blockstore.fetch(`put?cid-codec=dag-cbor`, {
+            headers: {
+                ...util.getBucketIdHeader(),
             },
             body: data,
             method: "POST",
@@ -84,10 +74,17 @@ describe("Worker", () => {
         const resp = await blockstore.fetch(`get?arg=${key}`, {
             headers: {
                 ...util.getBucketIdHeader(),
-                ...util.getContentBlockTypeHeader(),
             },
         }).then(r => r.text());
         expect(resp).toBeDefined();
         expect(resp).toBe(data);
+        const delete_resp = await blockstore.fetch(`rm?arg=${key}`, {
+            headers: {
+                ...util.getBucketIdHeader(),
+            },
+            method: 'DELETE',
+        }).then(r => r.json());
+        expect(delete_resp).toBeDefined();
+        expect(delete_resp.Hash).toBe(key);
     });
 });

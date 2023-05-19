@@ -81,7 +81,7 @@ export class InvalidTokenError extends HTTPError {
 }
 InvalidTokenError.CODE = 'ERROR_INVALID_AUTH_TOKEN';
 
-/* Bucket Access Errors */
+/* Bucket Errors */
 
 /**
  * No bucket id specified in the request
@@ -107,6 +107,38 @@ export class BucketNotFoundError extends HTTPError {
 	}
 }
 BucketNotFoundError.CODE = 'ERROR_BUCKET_NOT_FOUND';
+
+/**
+ * The bucket that is being created already exists
+ * @extends HTTPError
+ * @property {string} bucketId
+ */
+export class BucketAlreadyExistsError extends HTTPError {
+	constructor(bucketId, msg = `Bucket ${bucketId} already exists`) {
+		super(msg, 400);
+		this.name = 'BucketAlreadyExists';
+		this.code = BucketAlreadyExistsError.CODE;
+		this.bucketId = bucketId;
+	}
+}
+BucketAlreadyExistsError.CODE = 'ERROR_BUCKET_ALREADY_EXISTS';
+
+/**
+ * A bucket that is being deleted is not empty
+ * @extends HTTPError
+ * @property {string} bucketId
+ */
+export class BucketNotEmptyError extends HTTPError {
+	constructor(bucketId, msg = `Bucket ${bucketId} is not empty`) {
+		super(msg, 400);
+		this.name = 'BucketNotEmpty';
+		this.code = BucketNotEmptyError.CODE;
+		this.bucketId = bucketId;
+	}
+}
+BucketNotEmptyError.CODE = 'ERROR_BUCKET_NOT_EMPTY';
+
+/* Access Errors */
 
 /**
  * The authorization header is in the correct format for the requested resource, the token specified is valid, 
@@ -148,37 +180,37 @@ export class FirestoreNotFoundError extends HTTPError {
 }
 FirestoreNotFoundError.CODE = 'ERROR_FIRESTORE_NOT_FOUND';
 
-// /**
-//  * When a call to create data in Firestore fails
-//  */
-// export class FirestoreCreateError extends HTTPError {
-// 	constructor(msg = 'Failed to create data in Firestore') {
-// 		super(msg, 500);
-// 		this.name = 'FirestoreCreateError';
-// 		this.code = FirestoreCreateError.CODE;
-// 	}
-// }
-// FirestoreCreateError.CODE = 'ERROR_FIRESTORE_CREATE';
+/**
+ * When a call to create data in Firestore fails
+ */
+export class FirestoreCreateError extends HTTPError {
+	constructor(msg = 'Failed to create data in Firestore') {
+		super(msg, 500);
+		this.name = 'FirestoreCreateError';
+		this.code = FirestoreCreateError.CODE;
+	}
+}
+FirestoreCreateError.CODE = 'ERROR_FIRESTORE_CREATE';
 
-// /**	
-//  * When a call to delete data in Firestore fails
-//  */
-// export class FirestoreDeleteError extends HTTPError {
-// 	constructor(msg = 'Failed to delete data in Firestore') {
-// 		super(msg, 500);
-// 		this.name = 'FirestoreDeleteError';
-// 		this.code = FirestoreDeleteError.CODE;
-// 	}
-// }
-// FirestoreDeleteError.CODE = 'ERROR_FIRESTORE_DELETE';
+/**	
+ * When a call to delete data in Firestore fails
+ */
+export class FirestoreDeleteError extends HTTPError {
+	constructor(msg = 'Failed to delete data in Firestore') {
+		super(msg, 500);
+		this.name = 'FirestoreDeleteError';
+		this.code = FirestoreDeleteError.CODE;
+	}
+}
+FirestoreDeleteError.CODE = 'ERROR_FIRESTORE_DELETE';
 
-// /**
-//  * When a call to update data in Firestore fails
-//  */
-// export class FirestoreUpdateError extends HTTPError {
-// 	constructor(msg = 'Failed to update data in Firestore') {
-// 		super(msg, 500);
-// 		this.name = 'FirestoreUpdateError';
-// 		this.code = FirestoreUpdateError.CODE;
-// 	}
-// }
+/**
+ * When a call to update data in Firestore fails
+ */
+export class FirestoreUpdateError extends HTTPError {
+	constructor(msg = 'Failed to update data in Firestore') {
+		super(msg, 500);
+		this.name = 'FirestoreUpdateError';
+		this.code = FirestoreUpdateError.CODE;
+	}
+}

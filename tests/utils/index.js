@@ -1,6 +1,6 @@
 import { unstable_dev } from "wrangler";
 
-export const BLOCKSTORE_API = "/ipfs/api/v0/block";
+export const BLOCKSTORE_API = "/block";
 
 export class MyWorker {
 
@@ -42,7 +42,7 @@ export async function getApiWorker(api) {
 }
 
 export async function getBlockstoreWorker(api) {
-	let worker = new MyWorker(api, "packages/blockstore/build/worker/shim.mjs", {
+	let worker = new MyWorker(api ?? '', "packages/blockstore/build/worker/shim.mjs", {
 		config: "packages/blockstore/wrangler.toml",
 		experimental: { disableExperimentalWarning: true },
 	});

@@ -1,5 +1,4 @@
 use worker::*;
-use serde_json::json;
 mod utils;
 mod block;
 
@@ -22,7 +21,7 @@ pub fn start() {
     utils::set_panic_hook();
 }
 
-const IPFS_API: &str = "/ipfs/api/v0";
+const BLOCKSTORE_BINDING: &str = "BLOCKSTORE";
 
 // The main entry point for requests.
 #[event(fetch)]
@@ -36,11 +35,33 @@ pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Respo
             let router = Router::with_data(data);
             router
                 /* IPFS API V0 Routes */
-                .get_async(format!("{}/block/get", IPFS_API).as_str(), block::get_async)
-                .post_async(format!("{}/block/put", IPFS_API).as_str(), block::post_async)
-                .delete_async(format!("{}/block/rm", IPFS_API).as_str(), block::delete_async)
+                .get_async("/block/get", block::get_async)
+                // .head_async("/block/stat", block::head_async)
+                .post_async("/block/put", block::post_async)
+                .delete_async("/block/rm", block::delete_async)
                 /* S3 API Routes */
                 // TODO: @laudiacay, add S3 API routes
+                /* Misc */
+                // TODO: Think of a better way to do this. This just makes it very easy to pass the request
+                // from DELETE / from the api worker to the blockstore worker
+                .delete_async("/", |_req , ctx| async move {
+                    // Clone the SharedData
+                    let shared_data: SharedData = ctx.data.clone();
+                    let bucket_id: String = shared_data.bucket_id;
+                    // Get the blockstore
+                    let blockstore = ctx.bucket(BLOCKSTORE_BINDING)?;
+                    // Get the list of blocks
+                    let blocks = blockstore.list()
+                        .prefix(bucket_id)
+                        .limit(1)
+                        .execute().await?;
+                    // If the list of blocks is empty, return Ok, otherwise return an error
+                    if blocks.objects().is_empty() {
+                        Response::ok("true")
+                    } else {
+                        Response::error("false", 400)
+                    }
+                })
                 .run(req, env)
                 .await
             },
