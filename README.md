@@ -1,49 +1,55 @@
-# Template: worker-rust
+# Blucket
+An edgebased, scalable, and user oriented blockstore deployed on Cloudflare
 
-# TODO: Docs
-but if you look closely, you can see how to run the dev env
+## Dependencies
+- node LTS
+- npm
+- lerna
+- firebase
+- wrangler
 
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/cloudflare/templates/tree/main/worker-rust)
-
-A template for kick starting a Cloudflare worker project using [`workers-rs`](https://github.com/cloudflare/workers-rs).
-
-This template is designed for compiling Rust to WebAssembly and publishing the resulting worker to Cloudflare's [edge infrastructure](https://www.cloudflare.com/network/).
+## Layout
+- `firebase` - Firebase resources and emulator data
+- `packages` - our main services
+  - api - our high level API, with authentication + integration with Firebase
+  - blockstore - our blockstore implementation, meant to integrate with R2
+- `tests` -  unit / service, integration, and e2e tests
 
 ## Setup
+- Setup your Firebase integration -- login to Firebase and get a service account for your project
+- Setup Cloudflare -- login to wrangler
+- Config `packages/api/.dev.{stage}` TODO: Explain how
 
-To create a `my-project` directory using this template, run:
-
+## Building
 ```sh
-$ npm init cloudflare my-project worker-rust
-# or
-$ yarn create cloudflare my-project worker-rust
-# or
-$ pnpm create cloudflare my-project worker-rust
+# Compiles the entire project
+$ lerna run build
 ```
 
-> **Note:** Each command invokes [`create-cloudflare`](https://www.npmjs.com/package/create-cloudflare) for project creation.
-
-## Usage
-
-This template starts you off with a `src/lib.rs` file, acting as an entrypoint for requests hitting your Worker. Feel free to add more code in this file, or create Rust modules anywhere else for this project to use.
-
-With `wrangler`, you can build, test, and deploy your Worker with the following commands:
-
+## Developing
+To start a development server, run in this order:
 ```sh
-# compiles your project to WebAssembly and will warn of any issues
-$ npm run build
-
-# run your Worker in an ideal development workflow (with a local server, file watcher & more)
-$ npm run dev
-
-
-# deploy your Worker globally to the Cloudflare network (update your wrangler.toml file for configuration)
-$ npm run deploy
+# Start the Firebase emulator -- we rely on it for Firestore
+cd firebase && firebase emulators:start --import emulator
+# Start the API as a parent worker
+cd packages/api && npm run dev
+# Start the Blockstore as a child worker -- this needs to happen last
+cd packages/blockstore && npm run dev
 ```
 
-Read the latest `worker` crate documentation here: https://docs.rs/worker
+## Testing
+
+```sh
+# Run unit tests
+npm run test:unit
+# Run integration tests
+npm run test:integration
+# Run e2e tests, relies on having either a dev or deployed service
+npm run test:e2e
+```
 
 ## WebAssembly
+`blockstore` is implemented as a Rust worker.
 
 `workers-rs` (the Rust SDK for Cloudflare Workers used in this template) is meant to be executed as compiled WebAssembly, and as such so **must** all the code you write and depend upon. All crates and modules used in Rust-based Workers projects have to compile to the `wasm32-unknown-unknown` triple.
 
