@@ -1,13 +1,37 @@
-name = "auth"
+name = "blucket-api"
 main = "src/index.js"
 compatibility_date = "2023-05-12"
 compatibility_flags = [ "nodejs_compat" ]
 
-[[services]]
-binding = "blockstore_service"
-service = "blockstore_service"
+# TODO: This doesn't do anything yet. I need to get CF to fix this I think.
+services = [
+  { binding = "blockstore_service", service = "blucket-blockstore-staging", environment = "staging" },
+  { binding = "blockstore_service", service = "blucket-blockstore-production", environment = "production" },
+]
 
-[[r2_buckets]]
-binding = 'BLOCKSTORE'
-bucket_name = 'blockstore'
-preview_bucket_name = 'blockstore'
+# Production environment.
+[env.production]
+name = "blucket-api-production"
+# Configure this to your own account.
+account_id = "3648328bb7b24838c70d601e79891d98"
+# Configure this to your own domain.
+route = "blucket.alex1883.workers.dev"
+
+# [[env.production.services]]
+# binding = "blockstore_service"
+# service = "blucket-blockstore-production"
+
+# Staging environment.
+[env.staging]
+name = "blucket-api-staging"
+# Configure this to your own account.
+account_id = "3648328bb7b24838c70d601e79891d98"
+# Configure this to your own domain.
+route = "blucket-staging.alex1883.workers.dev"
+
+[env.dev]
+name = "blucket-api-dev"
+
+[[env.dev.services]]
+binding = "blockstore_service"
+service = "blucket-blockstore-dev"

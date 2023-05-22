@@ -25,10 +25,10 @@ import { FirebaseClient } from '../firebase/index.js'
  */
 export function withFirestore(_request, env, _ctx) {
 	if (
-		!env.FIREBASE_PROJECT_ID ||
-		!env.FIREBASE_PRIVATE_KEY_ID ||
-		!env.FIREBASE_PRIVATE_KEY ||
-		!env.FIREBASE_CLIENT_EMAIL ||
+		!env.project_id ||
+		!env.private_key_id ||
+		!env.private_key ||
+		!env.client_email ||
 		!env.FIRESTORE_API_URL
 	) {
 		throw new Error('Missing required env vars for firestore');
@@ -39,10 +39,10 @@ export function withFirestore(_request, env, _ctx) {
 	// Idk so that's why we do this ...
 	env.firestore = new FirebaseClient(
 		{
-			project_id: env.FIREBASE_PROJECT_ID,
-			private_key_id: env.FIREBASE_PRIVATE_KEY_ID,
-			private_key: env.FIREBASE_PRIVATE_KEY,
-			client_email: env.FIREBASE_CLIENT_EMAIL
+			project_id: env.project_id,
+			private_key_id: env.private_key_id,
+			private_key: env.private_key,
+			client_email: env.client_email
 		},
 		env.FIRESTORE_API_URL
 	);

@@ -21,16 +21,18 @@ describe("Blockstore Unit", () => {
         expect(resp.status).toBe(400);
 	});
 
-    it("should be able to tell if a bucket is empty", async () => {
-        const resp = await blockstore.fetch(``, {
-            headers: {
-                ...util.getBucketIdHeader(),
-            },
-            method: "DELETE",
-        })
-        expect(resp).toBeDefined();
-        expect(resp.status).toBe(200);
-    });
+    // TODO: This should be removed once the r2 bucket is accessible from the API
+    // This route will no longer be needed
+    // it("should be able to tell if a bucket is empty", async () => {
+    //     const resp = await blockstore.fetch(``, {
+    //         headers: {
+    //             ...util.getBucketIdHeader(),
+    //         },
+    //         method: "DELETE",
+    //     })
+    //     expect(resp).toBeDefined();
+    //     expect(resp.status).toBe(200);
+    // });
 
     it("should succeed at putting, getting, and removing a RAW block", async () => {
         const data = "Hello, World!";

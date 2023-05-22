@@ -1,11 +1,12 @@
 {
 	"name": "blucket-blockstore",
 	"private": true,
+	"type": "module",
 	"version": "0.0.0",
 	"scripts": {
 		"build": "cargo install --git https://github.com/CathalMullan/workers-rs worker-build && worker-build --release",
-		"dev": "wrangler dev --local",
-		"deploy": "wrangler publish"
+		"dev": "wrangler dev --local --env dev",
+		"deploy": "sh -c 'node scripts/cli.js deploy --env ${0} --r2'"
 	},
 	"devDependencies": {
 		"vitest": "^0.31.1",

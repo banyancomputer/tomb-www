@@ -1,29 +1,48 @@
 # Blucket
 An edgebased, scalable, and user oriented blockstore deployed on Cloudflare
+Much love to [Vasco Santos](https://github.com/vasco-santos)
+
 
 ## Dependencies
-- node LTS
-- npm
-- lerna
-- firebase
-- wrangler
+- `node LTS - 18.16.0` at time of writing
+- `npm`
+- `lerna`
+- `firebase-tools`
+- `wrangler`
 
 ## Layout
-- `firebase` - Firebase resources and emulator data
-- `packages` - our main services
-  - api - our high level API, with authentication + integration with Firebase
-  - blockstore - our blockstore implementation, meant to integrate with R2
-- `tests` -  unit / service, integration, and e2e tests
+- `firebase` - Firebase resources
+- `packages` - Our main Cloudflare services and packages
+  - api: our high level API, with authentication + integration with Firebase
+  - blockstore: our blockstore implementation, meant to integrate with R2
+- `tests` -  Our tests
+  - unit: Unit tests for individual services
+  - integration: Local Integration tests run with the `wrangler` JS API
+  - e2e: End to end tests run against a deployed service
 
 ## Setup
-- Setup your Firebase integration -- login to Firebase and get a service account for your project
-- Setup Cloudflare -- login to wrangler
-- Config `packages/api/.dev.{stage}` TODO: Explain how
+- Firebase
+  - Make sure you have a Firebase Account
+  - Login to Firebase CLI
+    - `firebase login` 
+  - Setup your Firebase projects
+    - Create a new project for each environment you want to implement. We've setup `dev`, `staging`, and `production` for our deployments.
+    - Associate your project ids to their stages in `firebase/.firebaserc`.
+    - Save the Admin SDK service accounts for these stages locally, for development and for pushing to Cloudflare. You can find these in the `Service Accounts` heading in your projects' settings. Save the JSON files as `firebase/service-account.${stage}.json`
+- Cloudflare
+  - Make sure you have a Cloudflare Account
+  - Login to Cloudflare CLI
+    - `wrangler login`
+  - Configure your Cloudflare Account ID in:
+    - `packages/api/wrangler.toml`
+    - `packages/blockstore/wrangler.toml`
+    - wrangler should handle this 🤌 but doesn't
 
 ## Building
 ```sh
 # Compiles the entire project
-$ lerna run build
+$ npm i
+$ npm run build
 ```
 
 ## Developing
@@ -47,6 +66,10 @@ npm run test:integration
 # Run e2e tests, relies on having either a dev or deployed service
 npm run test:e2e
 ```
+
+## Deploying
+TODO: Docs
+tl;dr it's really annoying
 
 ## WebAssembly
 `blockstore` is implemented as a Rust worker.

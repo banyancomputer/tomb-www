@@ -1,13 +1,17 @@
 {
 	"private": true,
 	"version": "0.0.0",
+	
+	"type": "module",
 	"scripts": {
+		"build": "lerna run build",
 		"test:unit": "vitest run --dir tests/unit",
 		"test:integration": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run --dir tests/integration'",
 		"test:integration:auth": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run auth --dir tests/integration'",
 		"test:integration:blockstore": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run block --dir tests/integration'",
 		"test:integration:bucket": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run bucket --dir tests/integration'",
-		"test:e2e": "vitest run --dir tests/e2e"
+		"test:e2e": "vitest run --dir tests/e2e",
+		"test:e2e:auth": "vitest run auth --dir tests/e2e"
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20230511.0",
@@ -19,6 +23,7 @@
 	},
 	"name": "blucket",
 	"workspaces": [
-		"packages/*"
+		"packages/*",
+		"firebase"
 	]
 }

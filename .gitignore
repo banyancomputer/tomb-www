@@ -3,6 +3,7 @@
 
 *.var
 serviceAccount.json
+service-account.*.json
 
 **/*.rs.bk
 wasm-pack.log

@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "groundskeeper-18560"
+    "dev": "blucket-dev",
+    "prod": "blucket-prod",
+    "staging": "blucket-staging"
   }
 }

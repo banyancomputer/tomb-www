@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeAll, afterAll } from "vitest";
 import * as util from "../utils";
 
-describe("Worker", () => {
+describe("Blockstore Integration", () => {
 	let api; // Our accessible API
     let blockstore; // Our blockstore
 

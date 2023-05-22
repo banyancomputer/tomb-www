@@ -11,7 +11,8 @@ use cid::{
 use crate::types::{SharedData};
 
 const MAX_BLOCK_SIZE: usize = 1 << 20;
-const BLOCKSTORE_BINDING: &str = "BLOCKSTORE";
+// TODO: We should read this from the config
+const BLOCKSTORE_BINDING: &str = "blucket_blockstore_bucket";
 const DEFAULT_HASH_FUNCTION: Code = Code::Sha2_256;
 const DEFAULT_CID_CODEC: u64 = 0x55;
 

@@ -34,6 +34,7 @@ export async function getApiWorker(api) {
 	let worker = new MyWorker(api ?? '', "packages/api/src/index.js", {
 		config: "packages/api/wrangler.toml",
 		experimental: { disableExperimentalWarning: true },
+        env: 'dev'
 	});
 	await worker.init();
 	return worker;
@@ -43,6 +44,7 @@ export async function getBlockstoreWorker(api) {
 	let worker = new MyWorker(api ?? '', "packages/blockstore/build/worker/shim.mjs", {
 		config: "packages/blockstore/wrangler.toml",
 		experimental: { disableExperimentalWarning: true },
+        env: 'dev'
 	});
 	await worker.init();
 	return worker;

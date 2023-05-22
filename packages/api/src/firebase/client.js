@@ -67,6 +67,7 @@ export default class FirebaseClient {
 	 * @async
 	 */
 	async call(endpoint, options, uid) {
+		console.log(`Calling Firebase API at ${this.apiUrl}/${endpoint}`);
 		return await fetch(`${this.apiUrl}/${endpoint}`, {
 			...options,
 			headers: await this.authHeader(uid),

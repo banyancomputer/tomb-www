@@ -21,7 +21,8 @@ pub fn start() {
     utils::set_panic_hook();
 }
 
-const BLOCKSTORE_BINDING: &str = "BLOCKSTORE";
+// TODO: We should read this from the config
+const BLOCKSTORE_BINDING: &str = "blucket_blockstore_bucket";
 
 // The main entry point for requests.
 #[event(fetch)]
@@ -39,8 +40,6 @@ pub async fn main(req: Request, env: Env, _ctx: worker::Context) -> Result<Respo
                 // .head_async("/block/stat", block::head_async)
                 .post_async("/block/put", block::post_async)
                 .delete_async("/block/rm", block::delete_async)
-                /* S3 API Routes */
-                // TODO: @laudiacay, add S3 API routes
                 /* Misc */
                 // TODO: Think of a better way to do this. This just makes it very easy to pass the request
                 // from DELETE / from the api worker to the blockstore worker

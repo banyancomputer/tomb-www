@@ -1,14 +1,37 @@
-name = "blockstore_service"
+name = "blucket-blockstore"
 main = "build/worker/shim.mjs"
-# compatibility_date = "2022-01-20"
 compatibility_date = "2022-09-12" # required
 compatibility_flags = ["streams_enable_constructors"]
-workers_dev = true
 
 [vars]
 WORKERS_RS_VERSION = "0.0.16"
+BUCKET_BINDING = "blucket_blockstore_bucket"
 
-[[r2_buckets]]
-binding = 'BLOCKSTORE'
-bucket_name = 'blockstore'
-preview_bucket_name = 'blockstore'
+# Production environment.
+[env.production]
+name = "blucket-blockstore-production"
+# Configure this to your own account.
+account_id = "3648328bb7b24838c70d601e79891d98"
+
+[[env.production.r2_buckets]]
+binding = "blucket_blockstore_bucket"
+bucket_name = "blucket-blockstore-bucket-production"
+
+# Staging environment.
+[env.staging]
+name = "blucket-blockstore-staging"
+# Configure this to your own account.
+account_id = "3648328bb7b24838c70d601e79891d98"
+
+[[env.staging.r2_buckets]]
+binding = "blucket_blockstore_bucket"
+bucket_name = "blucket-blockstore-bucket-staging"
+
+# Development environment.
+[env.dev]
+name = "blucket-blockstore-dev"
+
+[[env.dev.r2_buckets]]
+binding = 'blucket_blockstore_bucket'
+bucket_name = 'blucket-blockstore-bucket-dev'
+preview_bucket_name = 'blucket-blockstore-bucket-dev-preview'
