@@ -7,7 +7,7 @@
 		"test:integration:auth": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run auth --dir tests/integration'",
 		"test:integration:blockstore": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run block --dir tests/integration'",
 		"test:integration:bucket": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run bucket --dir tests/integration'",
-		"test:e2e": "ENDPOINT=http://127.0.0.1:8787 vitest run --dir tests/e2e"
+		"test:e2e": "vitest run --dir tests/e2e"
 	},
 	"devDependencies": {
 		"@cloudflare/workers-types": "^4.20230511.0",
