@@ -5,7 +5,7 @@ describe("Auth Integration", () => {
 	let api;
 
 	beforeAll(async () => {
-		api = await util.getApiWorker(null);
+		api = await util.getWorker();
 	});
 
 	afterAll(async () => {

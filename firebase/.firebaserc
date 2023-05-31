@@ -1,6 +1,6 @@
 {
   "projects": {
-    "dev": "blucket-dev",
+    "default": "blucket-dev",
     "prod": "blucket-prod",
     "staging": "blucket-staging"
   }

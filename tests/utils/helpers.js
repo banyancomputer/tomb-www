@@ -14,11 +14,11 @@ export function createBearerHeader(bearerToken) {
 	}
 }
 
-export function createBlockTypeHeader(blockType) {
-	return {
-		'x-block-type': blockType,
-	}
-}
+// export function createBlockTypeHeader(blockType) {
+// 	return {
+// 		'x-block-type': blockType,
+// 	}
+// }
 
 /* Header Getters */
 
@@ -38,17 +38,21 @@ export function getBadBucketIdHeader() {
 	return createBucketIdHeader(getBadBucketId());
 }
 
-export function getMetadataBlockTypeHeader() {
-	return createBlockTypeHeader(getMetadataBlockType());
+export function getRandomBucketIdHeader() {
+	return createBucketIdHeader(getRandomBucketId());
 }
 
-export function getContentBlockTypeHeader() {
-	return createBlockTypeHeader(getContentBlockType());
-}
+// export function getMetadataBlockTypeHeader() {
+// 	return createBlockTypeHeader(getMetadataBlockType());
+// }
 
-export function getBadBlockTypeHeader() {
-	return createBlockTypeHeader(getInvalidBlockType());
-}
+// export function getContentBlockTypeHeader() {
+// 	return createBlockTypeHeader(getContentBlockType());
+// }
+
+// export function getBadBlockTypeHeader() {
+// 	return createBlockTypeHeader(getInvalidBlockType());
+// }
 
 /* Global Getters */
 
@@ -68,17 +72,22 @@ export function getBadBucketId() {
 	return globals.BAD_BUCKET_ID;
 }
 
-export function getMetadataBlockType() {
-	return 'metadata';
+export function getRandomBucketId() {
+	// Return a random bucket ID
+	return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
-export function getContentBlockType() {
-	return 'content';
-}
+// export function getMetadataBlockType() {
+// 	return 'metadata';
+// }
 
-export function getInvalidBlockType() {
-	return 'invalid';
-}
+// export function getContentBlockType() {
+// 	return 'content';
+// }
+
+// export function getInvalidBlockType() {
+// 	return 'invalid';
+// }
 
 export function getTestTextData() {
 	return globals.TEXT_DATA;
@@ -86,4 +95,8 @@ export function getTestTextData() {
 
 export function getTestJsonData() {
 	return globals.JSON_DATA;
+}
+
+export function getRandomData() {
+	return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }

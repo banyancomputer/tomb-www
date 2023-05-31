@@ -2,16 +2,14 @@ import { describe, expect, it, beforeAll, afterAll } from "vitest";
 import * as util from '../utils'
 
 describe("Bucket Integration", () => {
-	let api, blockstore;
+	let api;
 
 	beforeAll(async () => {
-		blockstore = await util.getBlockstoreWorker(null);
-		api = await util.getApiWorker(null);
+		api = await util.getWorker();
 	});
 
 	afterAll(async () => {
 		await api.stop();
-		await blockstore.stop();
 	});
 
 	it("should fail at attempting to create an extant bucket", async () => {
@@ -29,12 +27,13 @@ describe("Bucket Integration", () => {
 
 	it("should fail at attempting to delete a non-empty bucket", async () => {
 		// Put a block in the bucket
+		const data = util.getRandomData();
 		const put_resp = await api.fetch(`block/put`, {
 			headers: {
 				...util.getAuthHeader(),
 				...util.getBucketIdHeader(),
 			},
-			body: "Hello, World!",
+			body: data,
 			method: 'POST'
 		}).then(r => r.json());
 		expect(put_resp).toBeDefined();
@@ -54,10 +53,11 @@ describe("Bucket Integration", () => {
 
 	it("should succeed at creating and immediately deleting a bucket", async () => {
 		// Create a bucket
+		const bucket_header = util.getRandomBucketIdHeader();
 		const put_resp = await api.fetch('', {
 			headers: {
 				...util.getAuthHeader(),
-				...util.createBucketIdHeader("test-bucket"),
+				...bucket_header,
 			},
 			method: 'PUT'
 		});
@@ -68,7 +68,7 @@ describe("Bucket Integration", () => {
 		const delete_resp = await api.fetch('', {
 			headers: {
 				...util.getAuthHeader(),
-				...util.createBucketIdHeader("test-bucket"),
+				...bucket_header,
 			},
 			method: 'DELETE'
 		});
@@ -78,10 +78,11 @@ describe("Bucket Integration", () => {
 
 	it("should succeed at creating a bucket, putting a block in it, removing the block, and deleting the bucket", async () => {
 		// Create a bucket
+		const bucket_header = util.getRandomBucketIdHeader();
 		const put_resp = await api.fetch('', {
 			headers: {
 				...util.getAuthHeader(),
-				...util.createBucketIdHeader("test-bucket"),
+				...bucket_header,
 			},
 			method: 'PUT'
 		});
@@ -92,7 +93,7 @@ describe("Bucket Integration", () => {
 		const put_block_resp = await api.fetch(`block/put`, {
 			headers: {
 				...util.getAuthHeader(),
-				...util.createBucketIdHeader("test-bucket"),
+				...bucket_header,
 			},
 			body: "Hello, World!",
 			method: 'POST'
@@ -104,7 +105,7 @@ describe("Bucket Integration", () => {
 		const delete_block_resp = await api.fetch(`block/rm?arg=${put_block_resp.Key}`, {
 			headers: {
 				...util.getAuthHeader(),
-				...util.createBucketIdHeader("test-bucket"),
+				...bucket_header,
 			},
 			method: 'DELETE'
 		}).then(r => r.json());
@@ -115,7 +116,7 @@ describe("Bucket Integration", () => {
 		const delete_resp = await api.fetch('', {
 			headers: {
 				...util.getAuthHeader(),
-				...util.createBucketIdHeader("test-bucket"),
+				...bucket_header,
 			},
 			method: 'DELETE'
 		});

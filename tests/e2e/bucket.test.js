@@ -3,7 +3,7 @@ import * as util from '../utils'
 
 const DEV_URL = util.getDevUrl();
 
-describe("Bucket Integration", () => {
+describe("Bucket e2e", () => {
 	it("should fail at attempting to create an extant bucket", async () => {
 		// Create a bucket
 		const put_resp = await fetch(DEV_URL, {
@@ -19,12 +19,13 @@ describe("Bucket Integration", () => {
 
 	it("should fail at attempting to delete a non-empty bucket", async () => {
 		// Put a block in the bucket
+		const data = util.getRandomData();
 		const put_resp = await fetch(`${DEV_URL}/block/put`, {
 			headers: {
 				...util.getAuthHeader(),
 				...util.getBucketIdHeader(),
 			},
-			body: "Hello, World!",
+			body: data,
 			method: 'POST'
 		}).then(r => r.json());
 		expect(put_resp).toBeDefined();
@@ -44,21 +45,21 @@ describe("Bucket Integration", () => {
 
 	it("should succeed at creating and immediately deleting a bucket", async () => {
 		// Create a bucket
+		const bucket_header = util.getRandomBucketIdHeader();
 		const put_resp = await fetch(DEV_URL, {
 			headers: {
 				...util.getAuthHeader(),
-				...util.createBucketIdHeader("test-bucket"),
+				...bucket_header,
 			},
 			method: 'PUT'
 		});
 		expect(put_resp).toBeDefined();
 		expect(put_resp.status).toBe(200);
-
 		// Delete the bucket
 		const delete_resp = await fetch(DEV_URL, {
 			headers: {
 				...util.getAuthHeader(),
-				...util.createBucketIdHeader("test-bucket"),
+				...bucket_header,
 			},
 			method: 'DELETE'
 		});
@@ -68,10 +69,12 @@ describe("Bucket Integration", () => {
 
 	it("should succeed at creating a bucket, putting a block in it, removing the block, and deleting the bucket", async () => {
 		// Create a bucket
+		const data = util.getRandomData();
+		const bucket_header = util.getRandomBucketIdHeader();
 		const put_resp = await fetch(DEV_URL, {
 			headers: {
 				...util.getAuthHeader(),
-				...util.createBucketIdHeader("test-bucket"),
+				...bucket_header,
 			},
 			method: 'PUT'
 		});
@@ -82,9 +85,9 @@ describe("Bucket Integration", () => {
 		const put_block_resp = await fetch(`${DEV_URL}/block/put`, {
 			headers: {
 				...util.getAuthHeader(),
-				...util.createBucketIdHeader("test-bucket"),
+				...bucket_header,
 			},
-			body: "Hello, World!",
+			body: data,
 			method: 'POST'
 		}).then(r => r.json());
 		expect(put_block_resp).toBeDefined();
@@ -94,7 +97,7 @@ describe("Bucket Integration", () => {
 		const delete_block_resp = await fetch(`${DEV_URL}/block/rm?arg=${put_block_resp.Key}`, {
 			headers: {
 				...util.getAuthHeader(),
-				...util.createBucketIdHeader("test-bucket"),
+				...bucket_header,
 			},
 			method: 'DELETE'
 		}).then(r => r.json());
@@ -105,7 +108,7 @@ describe("Bucket Integration", () => {
 		const delete_resp = await fetch(DEV_URL, {
 			headers: {
 				...util.getAuthHeader(),
-				...util.createBucketIdHeader("test-bucket"),
+				...bucket_header,
 			},
 			method: 'DELETE'
 		});

@@ -1,6 +1,8 @@
 firebase-debug.log*
 firebase-debug.*.log*
 ui-debug.log*
+firestore-debug.log*
+firestore-debug.*.log*
 
 serviceAccount.json
 service-account.*.json

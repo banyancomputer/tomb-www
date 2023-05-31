@@ -3,7 +3,7 @@ import * as util from "../utils";
 
 const DEV_URL = `${util.getDevUrl()}/block`
 
-describe("Blockstore Integration", () => {
+describe("Blockstore e2e", () => {
 	it("should fail for not including a bucket-id in the header", async () => {
         const resp = await fetch(`${DEV_URL}/put`, {
             headers: {
@@ -16,7 +16,7 @@ describe("Blockstore Integration", () => {
 	});
 
     it("should succeed at putting, getting, and removing a RAW block", async () => {
-        const data = "Hello, World!";
+        const data = util.getRandomData() //"Hello, World!";
         const put_resp = await fetch(`${DEV_URL}/put`, {
             headers: {
                ...util.getAuthHeader(),
@@ -48,7 +48,7 @@ describe("Blockstore Integration", () => {
     });
 
     it("should succeed at putting, getting, and removing a DAG-CBOR block", async () => {
-        const data = "Hello, World!";
+        const data = util.getRandomData();
         const put_resp = await fetch(`${DEV_URL}/put?cid-codec=dag-cbor`, {
             headers: {
                 ...util.getAuthHeader(),

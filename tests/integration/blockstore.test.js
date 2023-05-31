@@ -2,18 +2,14 @@ import { describe, expect, it, beforeAll, afterAll } from "vitest";
 import * as util from "../utils";
 
 describe("Blockstore Integration", () => {
-	let api; // Our accessible API
-    let blockstore; // Our blockstore
-
+    let api;
 	beforeAll(async () => {
-        // ORDER MATTERS HERE
-        blockstore = await util.getBlockstoreWorker(null);
-        api = await util.getApiWorker(util.BLOCKSTORE_API);
+        api = (await util.getWorker())
+            .withAPI(util.BLOCKSTORE_API);
 	});
 
 	afterAll(async () => {
 		await api.stop();
-        await blockstore.stop();
 	});
 
 	it("should fail for not including a bucket-id in the header", async () => {
@@ -28,7 +24,7 @@ describe("Blockstore Integration", () => {
 	});
 
     it("should succeed at putting, getting, and removing a RAW block", async () => {
-        const data = "Hello, World!";
+        const data = util.getRandomData()   //"Hello, World!";
         const put_resp = await api.fetch(`put`, {
             headers: {
                ...util.getAuthHeader(),
@@ -60,7 +56,7 @@ describe("Blockstore Integration", () => {
     });
 
     it("should succeed at putting, getting, and removing a DAG-CBOR block", async () => {
-        const data = "Hello, World!";
+        const data = util.getRandomData()   //"Hello, World!";
         const put_resp = await api.fetch(`put?cid-codec=dag-cbor`, {
             headers: {
                 ...util.getAuthHeader(),
