@@ -32,14 +32,14 @@ describe("Worker", () => {
 		expect(resp.status).toBe(401);
 	});
 
-	it("should fail with 403 error code for not including a Bearer token with a valid userId", async () => {
+	it("should fail with 401 error code for not including a Bearer token with an extant keyId", async () => {
 		const resp = await fetch(DEV_URL, {
 			headers: {
 				...util.createBearerHeader("bad-user-id:bad-secret"),
 			},
 		});
 		expect(resp).toBeDefined();
-		expect(resp.status).toBe(403);
+		expect(resp.status).toBe(401);
 	});
 
 	it("should fail with 403 error code for not including a Bearer token with a valid userKey", async () => {
@@ -62,7 +62,7 @@ describe("Worker", () => {
 		expect(resp.status).toBe(400);
 	});
 
-	it("should fail with 404 error code for including valid authorization, but non-extant bucketId", async () => {
+	it("should fail with 403 error code for including valid authorization, but non-extant bucketId", async () => {
 		const resp = await fetch(DEV_URL, {
 			headers: {
 				...util.getAuthHeader(),
@@ -70,7 +70,7 @@ describe("Worker", () => {
 			},
 		});
 		expect(resp).toBeDefined();
-		expect(resp.status).toBe(404);
+		expect(resp.status).toBe(403);
 	});
 
 	it("should fail with a 403 error code for including valid authorization, but a bucketId that the user does not have access to", async () => {

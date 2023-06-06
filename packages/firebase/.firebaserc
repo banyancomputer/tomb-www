@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "blucket-dev",
+    "prod": "blucket-prod"
+  }
+}
