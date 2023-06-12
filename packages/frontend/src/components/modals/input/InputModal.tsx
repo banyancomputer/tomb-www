@@ -49,13 +49,6 @@ const ChangeModal: React.FC<INavItem> = ({
               className={`input border-[#E9E9EA] border-2 rounded-sm focus:outline-none w-full px-3`}
               onChange={onChangeValue}
             />
-            {/*<Divider borderColor="#000" borderWidth="1px" />*/}
-            {/*<input*/}
-            {/*  id="email"*/}
-            {/*  type="text"*/}
-            {/*  placeholder="Enter password to confirm"*/}
-            {/*  className={`input border-[#E9E9EA] border-2 rounded-sm focus:outline-none w-full px-3 mb-3`}*/}
-            {/*/>{' '}*/}
             {error && <div className="flex text-red-500">{error}</div>}
           </Stack>
         </ModalBody>

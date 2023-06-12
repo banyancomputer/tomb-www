@@ -40,6 +40,13 @@ Setup your vendor accounts and credentials:
   - Configure your Cloudflare Account ID in:
     - `wrangler.toml`
 
+Populate configuration files
+
+- frontend
+  - We've included an example `.env` file for configuring our frontend against our Dev environment. This sets up a connection to firebase ad our worker
+- worker
+  - In development, our firebase service account is imported into the worker's environment. So long as you have a `firebase/service-account.dev.json` file, you should be good to go.
+
 ## Developing
 To start a development server, run:
 ```sh
@@ -59,4 +66,4 @@ npm run test:e2e
 
 ## Deploying
 TODO: Docs
-tl;dr it's really annoying
+tl;dr it's really annoying. The dev environment is good to go though!

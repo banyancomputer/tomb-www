@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styles from './SidebarLayout.module.css';
-import { auth } from '@/lib/firebase';
+// import { auth } from '@/lib/firebase';
 import AlphaTag from '../../../images/tags/AlphaTag';
 import BrandLogo from '@/images/icons/BrandLogo';
 import BrandWordmark from '@/images/icons/BrandWordmark';
@@ -14,6 +14,7 @@ import Support from '@/images/icons/Support';
 import Disconnect from '@/images/icons/Disconnect';
 import { CloseIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
+import { useAuth } from '@/contexts/session';
 
 // TOOD
 
@@ -23,32 +24,25 @@ const navItemsUpper = [
     href: '/',
     icon: Dashboard,
   },
-  // {
-  //   label: 'Upload Portal',
-  //   href: '/upload-portal',
-  //   icon: DealPortalIcon,
-  // },
   {
     label: 'Account',
     href: '/account',
     icon: Account,
-  },
-  {
-    label: 'Support',
-    href: 'mailto:support@tombolo.store',
-    icon: Support,
   },
 ];
 
 export interface ISideNav {}
 // @ts-ignore
 const SideNav: React.FC<ISideNav> = ({ children }) => {
+  const { logOut } = useAuth();
   const [checked, setChecked] = useState(false);
   const navItemsLower = [
     {
       label: 'Log Out',
       callback: async () => {
-        await auth.signOut();
+        // await auth.signOut();
+        await logOut();
+
         // Force a hard refresh to ensure everything is disconnected properly
         window.location.href = window.location.origin;
       },

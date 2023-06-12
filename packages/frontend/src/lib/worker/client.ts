@@ -1,14 +1,15 @@
 // TODO: This should really be a context.
 import AccessKey from "@/lib/entities/accessKey";
 import Block from "@/lib/entities/block";
+import { getSingleKey } from "@/lib/db/firestore";
 
 export const BLOCKSTORE_API_URI = "block"
 
 export class Client {
     api: string;
     accessKey: AccessKey;
-    constructor(api: string, accessKey: AccessKey) {
-        this.api = api;
+    constructor(accessKey: AccessKey) {
+        this.api = process.env.NEXT_PUBLIC_WORKER_API || "http://localhost:8787";
         this.accessKey = accessKey;
     }
 
@@ -19,20 +20,6 @@ export class Client {
         };
     }
     
-    /* Bucket API */
-    // Unnecessary for now. We can request this from Firestore.
-    // async getRootCid(bucketId: string): Promise<string> {
-    //     const resp = await fetch(`${this.api}`, {
-    //         headers: {
-    //             ...this.headers(bucketId),
-    //         },
-    //     });
-    //     if (!resp.ok) {
-    //         throw new Error(`Failed to get root cid: ${resp.status} ${resp.statusText}`);
-    //     }
-    //     return await resp.json().then(json => json.rootCid);
-    // }
-
     /* Blockstore API */
 
     async get(bucketId: string, cid: string) {

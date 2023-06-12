@@ -1,7 +1,7 @@
-import client from '../client';
-import AccessKey, { AccessKeyData } from '../../entities/accessKey'
+import { Firestore } from '@/config/firebase';
+import AccessKey, { AccessKeyData } from '../entities/accessKey'
 import Bucket, { BucketData } from '@/lib/entities/bucket';
-import User, { UserData } from '@/lib/entities/user';
+
 import {
   doc,
   getDoc,
@@ -10,16 +10,12 @@ import {
   where,
   setDoc,
   collection,
-  updateDoc,
   deleteDoc
 } from 'firebase/firestore';
 
-// TODO: It would be awesome if this was just exposed from a context or memo
-// TODO: Use types
 // TODO: Error handling on Firestore operations
 
 // Our collections
-const users_collection = "users"
 const keys_collection = "accessKeys"
 const buckets_collection = "buckets"
 
@@ -28,20 +24,20 @@ const buckets_collection = "buckets"
 /*
  * Initialize a user in firestore
  */
-export async function createUser(uid: string): Promise<UserData> {
-  const key = await createKey(uid);
-  const key_id = key.id
-  const docRef = doc(client.firestore, users_collection, uid);
-  const data = { key_id } as UserData
-  await setDoc(docRef, data);
-  return data;
-}
+// export async function createUser(uid: string): Promise<UserData> {
+//   const key = await createKey(uid);
+//   const key_id = key.id
+//   const docRef = doc(client.firestore, users_collection, uid);
+//   const data = { key_id } as UserData
+//   await setDoc(docRef, data);
+//   return data;
+// }
 
-export async function getUser(uid: string): Promise<UserData> {
-  const docRef = doc(client.firestore, users_collection, uid)
-  const snapshot = await getDoc(docRef)
-  return snapshot.data() as UserData
-}
+// export async function getUser(uid: string): Promise<UserData> {
+//   const docRef = doc(client.firestore, users_collection, uid)
+//   const snapshot = await getDoc(docRef)
+//   return snapshot.data() as UserData
+// }
 
 /* Key Utilities */
 
@@ -51,7 +47,7 @@ export async function getUser(uid: string): Promise<UserData> {
  */
 export async function createKey(owner: string): Promise<AccessKey> {
   // Create a new document with unique id
-  const accessKeysCollection = collection(client.firestore, keys_collection);
+  const accessKeysCollection = collection(Firestore, keys_collection);
   const docRef = doc(accessKeysCollection);
   // Generte a random key
   const value = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -64,11 +60,24 @@ export async function createKey(owner: string): Promise<AccessKey> {
 }
 
 export async function getKey(keyId: string): Promise<AccessKey> {
-  const docRef = doc(client.firestore, keys_collection, keyId);
+  const docRef = doc(Firestore, keys_collection, keyId);
   const snapshot = await getDoc(docRef);
   return {
     id: snapshot.id,
     data: snapshot.data() as AccessKeyData
+  } as AccessKey;
+}
+
+export async function getSingleKey(owner: string): Promise<AccessKey> {
+  const keyQuery = query(
+    collection(Firestore, keys_collection),
+    where("owner", "==", owner)
+  );
+  const querySnapshot = await getDocs(keyQuery);
+  // Return the first key
+  return {
+    id: querySnapshot.docs[0].id,
+    data: querySnapshot.docs[0].data() as AccessKeyData
   } as AccessKey;
 }
 
@@ -79,7 +88,7 @@ export async function getKey(keyId: string): Promise<AccessKey> {
 export async function getKeys(owner: string): Promise<AccessKey[]> {
   let keys: AccessKey[] = []
   const keyQuery = query(
-    collection(client.firestore, keys_collection),
+    collection(Firestore, keys_collection),
     where("owner", "==", owner)
   );
   const querySnapshot = await getDocs(keyQuery);
@@ -97,7 +106,7 @@ export async function getKeys(owner: string): Promise<AccessKey[]> {
  * @param keyId - the id of the key to remove
  */
 export async function removeKey(keyId: string): Promise<void> {
-  const docRef = doc(client.firestore, keys_collection, keyId);
+  const docRef = doc(Firestore, keys_collection, keyId);
   await deleteDoc(docRef);
 }
 
@@ -110,7 +119,7 @@ export async function removeKey(keyId: string): Promise<void> {
  */
 export async function createBucket(owner: string, bucketId: string): Promise<Bucket> {
   // Create a new document with Known Id
-  const docRef = doc(client.firestore, buckets_collection, bucketId);
+  const docRef = doc(Firestore, buckets_collection, bucketId);
   const data = { owner } as BucketData;
   await setDoc(docRef, data);
   return {
@@ -124,7 +133,7 @@ export async function createBucket(owner: string, bucketId: string): Promise<Buc
  * @param bucketId - the id of the bucket to get
  */
 export async function getBucket(bucketId: string): Promise<Bucket> {
-  const docRef = doc(client.firestore, buckets_collection, bucketId);
+  const docRef = doc(Firestore, buckets_collection, bucketId);
   const snapshot = await getDoc(docRef);
   return {
     id: snapshot.id,
@@ -139,7 +148,7 @@ export async function getBucket(bucketId: string): Promise<Bucket> {
 export async function getBuckets(owner: string) {
   let buckets: Bucket[] = []
   const BucketQuery = query(
-    collection(client.firestore, buckets_collection),
+    collection(Firestore, buckets_collection),
     where("owner", "==", owner)
   );
   const querySnapshot = await getDocs(BucketQuery);
@@ -157,6 +166,6 @@ export async function getBuckets(owner: string) {
  * @param bucketId - the id of the bucket to remove
  */
 export async function removeBucket(bucketId: string): Promise<void> {
-  const docRef = doc(client.firestore, buckets_collection, bucketId);
+  const docRef = doc(Firestore, buckets_collection, bucketId);
   await deleteDoc(docRef);
 }

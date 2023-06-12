@@ -1,6 +1,6 @@
 import Head from 'next/head';
 import { NextPageWithLayout } from '@/pages/page';
-import AuthedLayout from '@/components/layouts/authed/AuthedLayout';
+import AuthedLayout from '@/layouts/authed/AuthedLayout';
 import { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { ArrowBackIcon, SearchIcon } from '@chakra-ui/icons';
@@ -18,14 +18,14 @@ import NoBlockScreen from '@/components/utils/screens/NoBlockScreen';
 import { useRouter } from 'next/router';
 // import { db, storage } from '@/lib/firebase/client';
 import AuthorizedRoute from '@/components/utils/routes/Authorized';
-import StatCard from '@/components/cards/stat/StatCard';
-import FileStatus from '@/components/status/file/FileStatus';
+// import StatCard from '@/components/cards/stat/StatCard';
+// import FileStatus from '@/components/status/file/FileStatus';
 import CustomerList from '@/components/cards/customer/CustomerList';
 import Filter from '@/images/icons/Filter';
-import FilterDrawer from '@/components/drawers/FilterDrawer';
-import StatusBadge from '@/components/status/upload/StatusBadge';
-import { useAuth } from '@/contexts/auth';
-import useIsMobile from '@/components/utils/device/useIsMobile';
+// import FilterDrawer from '@/components/drawers/FilterDrawer';
+// import StatusBadge from '@/components/status/upload/StatusBadge';
+import { useAuth } from '@/contexts/session';
+// import useIsMobile from '@/components/utils/device/useIsMobile';
 
 export interface IBlockView {}
 
@@ -44,7 +44,7 @@ const customStyles = {
 };
 
 const BlockView: NextPageWithLayout<IBlockView> = ({}) => {
-  const { user, workerClient } = useAuth();
+  const { user, worker } = useAuth();
   const router = useRouter();
   const [blocks, setBlocks] = useState<Block[]>([]);
   // const [upload, setUpload] = useState<any>(null);
@@ -60,15 +60,15 @@ const BlockView: NextPageWithLayout<IBlockView> = ({}) => {
   useEffect(() => {
     // Get the upload ID from the URL. Its the last part of the URL
     const bucketId = router.asPath.split('/').pop();
-    console.log(workerClient)
-    if (bucketId && user && workerClient) {
-      workerClient.ls(bucketId).then((blocks) => {
+    console.log(worker)
+    if (bucketId && user && worker) {
+      worker.ls(bucketId).then((blocks) => {
         // console.log(blocks);
         // Set the files
         setBlocks(blocks);
       });
     }
-  }, [user, workerClient, router]);
+  }, [user, worker, router]);
 
   const blockViewColumns = [
     {
@@ -142,8 +142,6 @@ const BlockView: NextPageWithLayout<IBlockView> = ({}) => {
             columns={blockViewColumns}
             data={applyFilters()}
             customStyles={customStyles}
-            // expandableRows
-            // expandableRowsComponent={ExpandedComponentFileView}
           />
         </>
       ) : (

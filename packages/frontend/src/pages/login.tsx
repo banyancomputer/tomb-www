@@ -2,17 +2,25 @@ import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { NextPageWithLayout } from '@/pages/page';
 import LoadingSpinner from '@/components/utils/spinners/loading/LoadingSpinner';
-import PublicLayout from '@/components/layouts/public/PublicLayout';
+import PublicLayout from '@/layouts/public/PublicLayout';
 import PublicRoute from '@/components/utils/routes/Public';
-import { useAuth } from '@/contexts/auth';
+import { useAuth } from '@/contexts/session';
+import { useRouter } from 'next/router';
 
 const Login: NextPageWithLayout = ({}) => {
-  const { logIn } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const { user, logIn } = useAuth();
+  const router = useRouter();
+  // const [loading, setLoading] = useState(false);
   const [values, setValues] = useState({ email: '', password: '' });
   const [emailValid, setEmailValid] = useState(true);
   const [passwordValid, setPasswordValid] = useState(true);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (user) {
+      router.push('/').then(() => window.scrollTo(0, 0));
+    }
+  }, [user]);
 
   const [buttonDisabled, setButtonDisabled] = useState(
     values.email.length === 0 ||
@@ -50,10 +58,9 @@ const Login: NextPageWithLayout = ({}) => {
 
   const handleLoginUser = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
     logIn(values.email, values.password).catch((err) => {
       setError(err.message);
-      setLoading(false);
+      // setLoading(false);
     });
   };
 
@@ -68,7 +75,6 @@ const Login: NextPageWithLayout = ({}) => {
 
   return (
     <div>
-      <PublicRoute>
         <div className="text-6xl font-semibold align-left mb-2">Log in</div>
         <div className="text-xs font-normal align-left mb-6">
           New User?{' '}
@@ -116,14 +122,13 @@ const Login: NextPageWithLayout = ({}) => {
         </form>
 
         {/* Password Reset Email */}
-        <div className="text-sm text-center">
+        {/* <div className="text-sm text-center">
           <Link href="/recover">
             <div className="text-blue-500 text-xs mt-4">
               Get help logging in.
             </div>
           </Link>
-        </div>
-      </PublicRoute>
+        </div> */}
     </div>
   );
 };

@@ -28,3 +28,8 @@ export const generateJWT = async (payload, kid, key, algorithm) => {
 	
 	return jwt;
 };
+
+/**
+ * Verify a JWT
+ * 
+ */

@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { NextPageWithLayout } from '@/pages/page';
-import AuthedLayout from '@/components/layouts/authed/AuthedLayout';
+import AuthedLayout from '@/layouts/authed/AuthedLayout';
 import AuthorizedRoute from '@/components/utils/routes/Authorized';
 import useIsMobile from '@/components/utils/device/useIsMobile';
 

@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router';
-import { useAuth } from '@/contexts/auth';
+import { useAuth } from '@/contexts/session';
 import React, { useEffect } from 'react';
-import LoadingSpinner from '@/components/utils/spinners/loading/LoadingSpinner';
+// import LoadingSpinner from '@/components/utils/spinners/loading/LoadingSpinner';
 
 // TODO: This should be done within context or something
 
@@ -9,11 +9,12 @@ import LoadingSpinner from '@/components/utils/spinners/loading/LoadingSpinner';
 export interface IPublicRoute {}
 // @ts-ignore
 const PublicRoute: React.FC<IPublicRoute> = ({ children }) => {
-  const { user, userLoading } = useAuth();
+  // const { user, userLoading } = useAuth();
+  const { user } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (user && !userLoading) {
+    if (user) { //  && !userLoading) {
       router.push('/').then(() => window.scrollTo(0, 0));
     }
   }, [user]);

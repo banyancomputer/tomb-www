@@ -8,7 +8,7 @@
 	"license": "Apache-2.0 OR MIT",
 	"scripts": {
 		"build": "wrangler deploy --dry-run outdir=dist",
-		"dev": "wrangler dev --env dev",
+		"dev": "node scripts/cli.js import-firebase && wrangler dev --env dev",
 		"test:integration": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run --dir tests/integration --threads false'",
 		"test:integration:auth": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run auth --dir tests/integration --threads false'",
 		"test:integration:blockstore": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run block --dir tests/integration'",

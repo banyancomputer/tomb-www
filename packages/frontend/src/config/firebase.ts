@@ -26,27 +26,16 @@ const firebaseConfig = {
   measurementId: firebaseMeasurementId,
 };
 
-export class Client {
-    // Public Firebase Services
-    public auth: any;
-    public firestore: any;
-
-    private app: any;
-    private _analytics: any;
-
-    constructor(firebaseConfig: any, dev?: boolean) {
-        this.app = initializeApp(firebaseConfig);
-        this.auth = getAuth(this.app);
-        this.firestore = getFirestore(this.app);
-        if (typeof window !== 'undefined') {
-          this._analytics = getAnalytics(this.app);
-        }
-        if (dev) {
-            connectAuthEmulator(this.auth, 'http://localhost:9099');
-            connectFirestoreEmulator(this.firestore, 'localhost', 8080);
-        }
-    }
+const app = initializeApp(firebaseConfig);
+const Auth = getAuth(app);
+const Firestore = getFirestore(app);
+let _analytics;
+if (typeof window !== 'undefined') {
+  _analytics = getAnalytics(app);
+}
+if (process.env.NODE_ENV === 'development') {
+    connectAuthEmulator(Auth, 'http://localhost:9099');
+    connectFirestoreEmulator(Firestore, 'localhost', 8080);
 }
 
-const client = new Client(firebaseConfig, process.env.NODE_ENV === 'development');
-export default client;
+export { Auth, Firestore };

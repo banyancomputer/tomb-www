@@ -1,14 +1,14 @@
 import { useRouter } from 'next/router';
-import { auth, db } from '@/lib/firebase';
 import { FormEvent, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { NextPageWithLayout } from '@/pages/page';
-import PublicLayout from '@/components/layouts/public/PublicLayout';
+import PublicLayout from '@/layouts/public/PublicLayout';
 import validator from 'validator';
 import { passwordStrength } from 'check-password-strength';
+
 // import { AsYouType } from 'libphonenumber-js';
 // import PublicRoute from '@/components/utils/routes/Public';
-import { useAuth } from '@/contexts/auth';
+import { useAuth } from '@/contexts/session';
 
 const Register: NextPageWithLayout = ({}) => {
   const router = useRouter();
