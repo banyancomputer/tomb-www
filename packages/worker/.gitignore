@@ -1,6 +1,0 @@
-dist
-
-*.vars
-.wrangler
-
-.DS_Store
