@@ -7,8 +7,8 @@
 	"author": "Alex Miller <alex@banyan.computer>",
 	"license": "Apache-2.0 OR MIT",
 	"scripts": {
-		"kill": "sh -c `kill $(lsof -t -i:3000) $(lsof -t -i:4400) $(lsof -t -i:8787)`",
-		"dev": "npm run kill; lerna run dev --parallel",
+		"build": "wrangler deploy --dry-run outdir=dist",
+		"dev": "node scripts/cli.js import-firebase && wrangler dev --env dev",
 		"test:integration": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run --dir tests/integration --threads false'",
 		"test:integration:auth": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run auth --dir tests/integration --threads false'",
 		"test:integration:blockstore": "cd firebase && firebase emulators:exec --import emulator 'cd .. && vitest run block --dir tests/integration'",
@@ -16,12 +16,21 @@
 		"test:e2e": "vitest run --dir tests/e2e --threads false",
 		"test:e2e:auth": "vitest run auth --dir tests/e2e",
 		"test:e2e:blockstore": "vitest run blockstore --dir tests/e2e",
-		"test:e2e:bucket": "vitest run bucket --dir tests/e2e"
+		"test:e2e:bucket": "vitest run bucket --dir tests/e2e",
+		"deploy": "sh -c 'node scripts/cli.js import-firebase --env ${0} && node scripts/cli.js deploy --env ${0} --secrets'"
+	},
+	"dependencies": {
+		"@ipld/dag-cbor": "^9.0.1",
+		"@ipld/dag-json": "^10.1.0",
+		"@ipld/dag-pb": "^4.0.3",
+		"itty-router": "^2.6.1",
+		"jose": "^4.14.4",
+		"multiformats": "^11.0.2"
 	},
 	"devDependencies": {
-		"lerna": "^6.6.2",
+		"sade": "^1.8.1",
 		"standard": "^17.0.0",
-		"vitest": "^0.31.0"
+		"wrangler": "^3.0.1"
 	},
 	"standard": {
 		"ignore": [
@@ -32,8 +41,5 @@
 		"node": "18.x",
 		"npm": ">=7.20.0",
 		"yarn": "please-use-npm"
-	},
-	"workspaces": [
-		"packages/*"
-	]
+	}
 }
