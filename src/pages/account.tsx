@@ -8,10 +8,11 @@ import LoadingScreen from '@/components/utils/screens/LoadingScreen';
 import { useAuth } from '@/contexts/session';
 import KeyCard from '@/components/cards/key/KeyCard';
 import AccountInfoCard from '@/components/cards/account/AccountInfoCard';
+import * as userDb from '@/lib/db/user';
 
 const Account: NextPageWithLayout = ({}) => {
   const { user } = useAuth();
-  const [keys, setKeys] = useState<AccessKey[]>([]);
+  const [keys, setKeys] = useState<string[]>([]);
   // const [newEmail, setNewEmail] = useState<string>('');
   const [error, setError] = useState<string>('');
   // const { isOpen, onOpen, onClose } = useDisclosure();
@@ -19,9 +20,15 @@ const Account: NextPageWithLayout = ({}) => {
 
   useEffect(() => {
     if (user) {
-      getKeys(user.uid).then((keys) => {
-        setKeys(keys);
-      });
+      setKeys([])
+      // userDb.read(user.uid).then((u) => {
+      //   setKeys([u.data?.pubkey || ''])
+      // })
+
+
+      // getKeys(user.uid).then((keys) => {
+      //   setKeys(keys);
+      // });
     }
   }, [user]);
 
@@ -45,7 +52,7 @@ const Account: NextPageWithLayout = ({}) => {
               <h1 className="text-xl">Profile</h1>
               <div className="flex flex-col">
                 <AccountInfoCard
-                  uid={user?.uid || ''}
+                  uid={user?.firebaseUser.uid || ''}
                 />
 
                 {/* <div
@@ -88,8 +95,8 @@ const Account: NextPageWithLayout = ({}) => {
                   </div>
                 {keys.map((key, i) => (
                   <KeyCard
-                    id={key.id}
-                    value={key.data.value}
+                    id={key}
+                    value={"derp"}
                     key={i}
                   />
                 ))}
