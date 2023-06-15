@@ -13,37 +13,15 @@ import * as userDb from '@/lib/db/user';
 const Account: NextPageWithLayout = ({}) => {
   const { user } = useAuth();
   const [keys, setKeys] = useState<string[]>([]);
-  // const [newEmail, setNewEmail] = useState<string>('');
   const [error, setError] = useState<string>('');
   // const { isOpen, onOpen, onClose } = useDisclosure();
   // const [isMobile] = useIsMobile();
 
   useEffect(() => {
     if (user) {
-      setKeys([])
-      // userDb.read(user.uid).then((u) => {
-      //   setKeys([u.data?.pubkey || ''])
-      // })
-
-
-      // getKeys(user.uid).then((keys) => {
-      //   setKeys(keys);
-      // });
+      setKeys([user.data?.pubkey_fingerprint || ''])
     }
   }, [user]);
-
-  // const handleNewKey = () => {
-  //   if (user) {
-  //     firestore.createKey(user.uid).then((key) => {
-  //       setKeys(keys => [...keys, key]);
-  //     }
-  //     )
-  //   }
-  // }
-
-  // if (!keys) {
-  //   return <LoadingScreen />;
-  // }
 
   // TODO: Add button to create a new key
   return (

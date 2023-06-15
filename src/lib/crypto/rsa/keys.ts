@@ -44,14 +44,9 @@ export async function importEncryptedKeyPair(
   salt?: Uint8Array,
   hashAlg: HashAlg = DEFAULT_HASH_ALG
 ): Promise<CryptoKeyPair> {
-  console.log('importEncryptedKeyPair: publicKey', publicKey)
-  // console.log('importEncryptedKeyPair: encPrivateKey', encPrivateKey)
   const importedPublicKey = await importPublicKey(publicKey)
-  console.log('importedPublicKey', importedPublicKey)
   const passphraseKey = await aes.deriveKey(passphrase, salt)
-  console.log('dervied key:', passphraseKey)
   const privateKey = await aes.decrypt(encPrivateKey, passphraseKey)
-  console.log('privateKeyBytes', privateKey)
   const buf = utils.base64ToArrBuf(stripPrivateKeyHeader(privateKey))
   return webcrypto.subtle.importKey(
     ExportKeyFormat.PKCS8,
@@ -63,7 +58,6 @@ export async function importEncryptedKeyPair(
     true,
     ['decrypt']
   ).then((importedPrivateKey) => {
-    console.log('importedPrivateKey', importedPrivateKey)
     return { publicKey: importedPublicKey, privateKey: importedPrivateKey }
   })
 }
@@ -97,9 +91,7 @@ export async function importPublicKey(
   // const uses: KeyUsage[] = use === KeyUse.Exchange ? ['encrypt'] : ['verify']
   const alg = RSA_KEY_PAIR_ALG
   const uses: KeyUsage[] = ['encrypt']
-  console.log("here")
   const buf = utils.base64ToArrBuf(stripPublicKeyHeader(base64Key))
-  console.log("here2: ", buf)
   return webcrypto.subtle.importKey(
     'spki',
     buf,

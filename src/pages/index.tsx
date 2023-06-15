@@ -44,14 +44,7 @@ const Dashboard: NextPageWithLayout<IDashboard> = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
-    if (user) {
-      console.log('user');
-      // getBuckets(user.uid)
-      //   .then((buckets: Bucket[]) => {
-      //     setBuckets(buckets);
-      //   })
-      }
-    else {
+    if (!user) {
       router.push('/login');
     }
     }, [user]);
