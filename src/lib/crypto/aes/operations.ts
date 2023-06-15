@@ -32,15 +32,11 @@ export async function decryptBytes(
   key: SymmKey | string,
   opts?: Partial<SymmKeyOpts>
 ): Promise<ArrayBuffer> {
-  console.log('decryptBytes: msg', msg)
   const cipherText = utils.normalizeBase64ToBuf(msg)
-  console.log('decryptBytes: cipherText', cipherText)
   const importedKey = typeof key === 'string' ? await keys.importKey(key, opts) : key
-  console.log('decryptBytes: importedKey', importedKey)
   const alg = opts?.alg || DEFAULT_SYMM_ALG
   const iv = cipherText.slice(0, 16)
   const cipherBytes = cipherText.slice(16)
-  console.log('decryptBytes: decrypting with alg', alg)
   const msgBuff = await webcrypto.subtle.decrypt(
     { name: alg,
       // AES-CTR uses a counter, AES-GCM/AES-CBC use an initialization vector

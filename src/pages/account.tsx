@@ -1,7 +1,5 @@
 import { NextPageWithLayout } from '@/pages/page';
 import AuthedLayout from '@/layouts/authed/AuthedLayout';
-import { getKeys } from '@/lib/db/firestore';
-import AccessKey from '@/lib/entities/accessKey'
 import AuthorizedRoute from '@/components/utils/routes/Authorized';
 import { useEffect, useState } from 'react';
 import LoadingScreen from '@/components/utils/screens/LoadingScreen';
