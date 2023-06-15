@@ -75,19 +75,30 @@ export const SessionProvider = ({ children }: any) => {
     }
   }
 
-  const initUserSession = async (firebaseUser: FirebaseUser, passphrase: string) => {
+  const initUserSession = async (firebaseUser: FirebaseUser, passphrase?: string) => {
     console.log('initUserSession')
     // Get the keystore for the user from the browser
     const ks = await getKeystore(firebaseUser.uid)
     // TODO: Get rid of this if statement -- i'm p sure this is always defined
     if (ks) {
-      // Get the user from the db
       const user = await userDb.read(firebaseUser);
-      const { pubkey_fingerprint, enc_privkey } = user.data;
-      // Get the public key from the db
-      const pubkey = await pubkeyDb.read(pubkey_fingerprint);
-      // Import the keypair into the keystore if it's not already there
-      await ks.importEncryptedKeyPair(pubkey.data.spki, enc_privkey, passphrase);
+      setUser(user);
+      if (user && passphrase) {
+        // Get the user from the db
+        const { pubkey_fingerprint, enc_privkey } = user.data;
+        // Get the public key from the db
+        const pubkey = await pubkeyDb.read(pubkey_fingerprint);
+        // Import the keypair into the keystore if it's not already there
+        await ks.importEncryptedKeyPair(pubkey.data.spki, enc_privkey, passphrase);
+      }
+      // Test the keypair and raise an error if it's not valid
+      const msg = 'hello world';
+      const ciphertext = await ks.encrypt(msg);
+      const plaintext = await ks.decrypt(ciphertext);
+      if (plaintext !== msg) {
+        throw new Error('Keystore is invalid');
+      }
+      console.log('Keystore is valid')
     }
   }
 
@@ -106,8 +117,7 @@ export const SessionProvider = ({ children }: any) => {
     const unsubscribe = Auth.onAuthStateChanged(async (firebaseUser) => {
       try {
         if (firebaseUser) {
-          const user = await userDb.read(firebaseUser);
-          setUser(user);
+          await initUserSession(firebaseUser);
         } else {
           setUser(null);
         }
