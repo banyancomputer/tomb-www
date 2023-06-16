@@ -1,77 +1,65 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Bucket Rules
+    // High level rules
+    function userIsOwner(owner) {
+      // Ensure the User ID matches the Auth UID
+      return owner == request.auth.uid;
+    }
+
+    function fingerprintIsValid(fingerprint) {
+      // Make sure the ID is a valid sha1 hash
+      return fingerprint.matches("^[0-9a-f]{40}$");
+    }
+    
+    // User data rules
+    match /users/{userID} {
+      function encPrivkeyPkcs8IsValid(encPrivkey) {
+        // TODO: implement. For now, just check that it's not null
+        return encPrivkey != null;
+      }
+
+      function passkeySaltIsValid(salt) {
+        // TODO: implement. For now, just check that it's not null
+        return salt != null;
+      }
+
+      // Ensure that the user document is allowed
+      function userIsValid() {
+        return userIsOwner(userID) &&
+        fingerprintIsValid(request.resource.data["pubkey_fingerprint"]) &&
+        encPrivkeyPkcs8IsValid(request.resource.data["enc_privkey_pkcs8"]) &&
+        passkeySaltIsValid(request.resource.data["passkey_salt"]);
+      }
+      
+      allow read: if userIsOwner(userID);
+      allow write: if userIsValid();
+    }
+
+    // Bucket rules
+    // TODO: regex inputs to buckets
     match /buckets/{bucketId} {
       // Any autenticated can create a bucket
       allow create: if request.auth != null;
       // But only the owner can read, update, and delete it
       allow read, write, update, delete: if request.auth != null && request.auth.uid == resource.data.owner;
     }
-    // Key Rules
-    match /accessKeys/{keyId} {
-      // Any autenticated can create a key
-      allow create: if request.auth != null;
-      // Allow to read with the keyId as the uid (for reading from service account)
-      allow read: if request.auth.uid == keyId || request.auth.uid == resource.data.owner 
-      // But only the owner can read, update, and delete it
-      allow write, update, delete: if request.auth != null && request.auth.uid == resource.data.owner;
+
+    // PubKey rules
+    match /pubkeys/{pubkey_fingerprint}  {
+      function pubkeyIsSpki(pubkey) {
+        // TODO: Implement. For now, just check that it's not null
+        return pubkey != null;
+      }
+
+      function pubkeyIsValid() {
+        return fingerprintIsValid(pubkey_fingerprint) &&
+        pubkeyIsSpki(request.resource.data["spki"]) &&
+        userIsOwner(request.resource.data["owner"]);
+      }
+
+      allow read: if true;
+      allow write, create, delete: if pubkeyIsValid();
     }
-    
-    // TODO: Deprecate User data in favor of Auth
-    match /users/{userID} {
-      
-      function userIsOwner() {
-  	  	// Ensure the User ID matches the Auth UID
-      	return userID == request.auth.uid;
-	    }
-
-      // Ensure that the user document is allowed
-      function userIsValid() {
-        return userIsOwner()
-        // TODO: REGEX all fields
-        // request.resource.data["companyName"].matches("^[A-Za-z0-9]+(?:[ _-][A-Za-z0-9]+)*(?:, [A-Za-z0-9]+)*(?: [A-Za-z0-9]+)*(?:\.[A-Za-z0-9]*)?(?: [A-Za-z0-9]+)*$") &&
-        // request.resource.data["email"].matches("^[^@]+@[^@]+$") &&
-        // request.resource.data["fullName"].matches("^[A-Za-z]+(?:[.'\\- ][A-Za-z]+)*$") &&
-        // request.resource.data["jobTitle"].matches("^[A-Za-z]+(?:[ ][A-Za-z]+)*$") &&
-        // request.resource.data["phoneNumber"].matches("^[0-9]+$");
-      }
-      
-      allow read: if userIsOwner();
-      allow write: if userIsValid();
-
-      match /uploads/{uploadID} {
-      
-      	// Ensure that the user document is allowed
-      	//function uploadIsValid() {
-        //	return userIsOwner() &&
-        //	// TODO: REGEX all fields
-        //	request.resource.data["name"] is string &&
-        //	request.resource.data["size"] is number &&
-        //	request.resource.data["status"] is number &&
-        //  request.resource.data["root"] is string &&
-        //	request.resource.data["manifest"] is string
-      	//}
-        
-        allow read: if userIsOwner();
-        // Don't allow write to the upload document right now
-        // allow write: if uploadIsValid();
-
-        match /files/{filePath} {
-
-          //function fileIsValid() {
-          // return userIsOwner() &&
-          // TODO: REGEX all fields
-          // request.resource.data["path"] is string &&
-          // request.resource.data["name"] is string &&
-          // request.resource.data["size"] is number
-          //}
-
-          allow read: if userIsOwner();
-          // Don't allow write to the file document right now
-          // allow write: if fileIsValid();
-        }
-      }
-    } 
   }
 }

@@ -1,6 +1,6 @@
 import { NextPageWithLayout } from '@/pages/page';
 import AuthedLayout from '@/layouts/authed/AuthedLayout';
-import { getBuckets, createBucket, removeBucket } from '@/lib/db/firestore';
+// import { getBuckets, createBucket, removeBucket } from '@/lib/db/firestore';
 import { useEffect, useState } from 'react';
 import DataTable from 'react-data-table-component';
 import { AddIcon, SearchIcon } from '@chakra-ui/icons';
@@ -13,7 +13,8 @@ import {
 } from '@chakra-ui/react';
 import AuthorizedRoute from '@/components/utils/routes/Authorized';
 import NoUploadScreen from '@/components/utils/screens/NoUploadScreen';
-import  Bucket, { BucketData } from '@/lib/entities/bucket'; 
+import  Bucket, { BucketData } from '@/lib/entities/bucket';
+import * as bucketDb from '@/lib/db/bucket';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/session';
 import ChangeModal from '@/components/modals/input/InputModal';
@@ -43,31 +44,26 @@ const Dashboard: NextPageWithLayout<IDashboard> = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
-    if (user) {
-      getBuckets(user.uid)
-        .then((buckets: Bucket[]) => {
-          setBuckets(buckets);
-        })
-      }
-    else {
+    if (!user) {
       router.push('/login');
     }
     }, [user]);
 
   const handleNewBucket = async () => {
     if (user) {
-      createBucket(user.uid, newBucketId)
-        .then((bucket: Bucket) => {
-          console.log('Created new bucket');
-          buckets.push(bucket);
-          setNewBucketId('');
-          onClose();
-        })
-        .catch((err) => {
-          console.log(err);
-          setError(err.message);
-        }
-      );
+      console.log('new bucket: ' + newBucketId);
+      // createBucket(user.uid, newBucketId)
+      //   .then((bucket: Bucket) => {
+      //     console.log('Created new bucket');
+      //     buckets.push(bucket);
+      //     setNewBucketId('');
+      //     onClose();
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //     setError(err.message);
+      //   }
+      // );
     }
   };
 
@@ -81,12 +77,12 @@ const Dashboard: NextPageWithLayout<IDashboard> = () => {
 
   const handleRemoveBucket = async (bucketId: string) => {
     if (user) {
-      removeBucket(bucketId)
-        .then(() => {
-          console.log('Deleted bucket');
-          setBuckets(buckets.filter((bucket) => bucket.id !== bucketId));
-        }
-      );
+      // removeBucket(bucketId)
+      //   .then(() => {
+      //     console.log('Deleted bucket');
+      //     setBuckets(buckets.filter((bucket) => bucket.id !== bucketId));
+      //   }
+      // );
     }
   };
 

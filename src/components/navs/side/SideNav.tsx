@@ -1,16 +1,11 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
-import styles from './SidebarLayout.module.css';
-// import { auth } from '@/lib/firebase';
 import AlphaTag from '../../../images/tags/AlphaTag';
 import BrandLogo from '@/images/icons/BrandLogo';
 import BrandWordmark from '@/images/icons/BrandWordmark';
 import Dashboard from '@/images/icons/Dashboard';
 import NavItem from '../../items/nav/NavItem';
-import DealPortalIcon from '@/images/icons/DealPortalIcon';
 import Account from '@/images/icons/Account';
-import Support from '@/images/icons/Support';
 import Disconnect from '@/images/icons/Disconnect';
 import { CloseIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
@@ -40,10 +35,7 @@ const SideNav: React.FC<ISideNav> = ({ children }) => {
     {
       label: 'Log Out',
       callback: async () => {
-        // await auth.signOut();
         await logOut();
-
-        // Force a hard refresh to ensure everything is disconnected properly
         window.location.href = window.location.origin;
       },
       icon: Disconnect,
@@ -74,9 +66,8 @@ const SideNav: React.FC<ISideNav> = ({ children }) => {
         <div className="menu p-4 overflow-y-auto w-70 bg-base-100 text-base-content border-r border-r-black">
           {/* Brand */}
           <div className="flex items-center gap-2 cursor-pointer mb-8">
-            Blucket
-            {/* <BrandLogo />
-            <BrandWordmark /> */}
+            <BrandLogo />
+            <BrandWordmark />
             <AlphaTag />
             <div className="xs:block xs:ml-auto lg:hidden">
               <IconButton

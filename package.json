@@ -1,5 +1,5 @@
 {
-  "name": "tombolo",
+  "name": "tomb-www",
   "version": "0.0.0",
   "private": true,
   "engines": {
@@ -14,6 +14,8 @@
     "prettier": "prettier --write .",
     "format": "prettier --write .",
     "dev": "cross-env NODE_OPTIONS='--inspect' NODE_ENV='development' next dev",
+    "firebase": "firebase emulators:start --import state --project default",
+    "firebase:save": "firebase emulators:start --import state --export-on-exit state --project default",
     "prod": "cross-env NODE_ENV='production' next start"
   },
   "dependencies": {
@@ -21,7 +23,7 @@
     "@chakra-ui/react": "^2.5.2",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
-    "@oddjs/odd": "^0.37.1",
+    "@oddjs/odd": "^0.37.2",
     "@types/node": "18.15.5",
     "@types/react": "18.0.28",
     "@types/react-dom": "18.0.11",
@@ -31,11 +33,12 @@
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
     "firebase": "^9.20.0",
-    "firebase-admin": "^11.5.0",
     "framer-motion": "^10.8.5",
+    "keystore-idb": "^0.15.5",
     "libphonenumber-js": "^1.10.26",
     "next": "13.2.4",
     "nookies": "^2.5.2",
+    "one-webcrypto": "^1.0.3",
     "react": "18.2.0",
     "react-data-table-component": "^7.5.3",
     "react-dom": "18.2.0",
