@@ -8,8 +8,8 @@ service cloud.firestore {
     }
 
     function fingerprintIsValid(fingerprint) {
-      // Make sure the ID is a 16 character hex string
-      return fingerprint.matches("^[0-9a-f]{16}$");
+      // Make sure the ID is a valid sha1 hash
+      return fingerprint.matches("^[0-9a-f]{40}$");
     }
 
     function pubkeyIsSpki(pubkey) {

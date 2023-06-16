@@ -106,7 +106,7 @@ export const normalizeToBuf = (msg: Msg, strConv: (str: string) => ArrayBuffer):
 export function fingerprint(str: string): string {
   const hash = crypto.createHash('sha1')
   hash.update(str)
-  return hash.digest('hex').slice(0, 16)
+  return hash.digest('hex')
 }
 
 /* istanbul ignore next */
