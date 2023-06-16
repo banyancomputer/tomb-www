@@ -11,19 +11,25 @@ service cloud.firestore {
       // Make sure the ID is a valid sha1 hash
       return fingerprint.matches("^[0-9a-f]{40}$");
     }
-
-    function pubkeyIsSpki(pubkey) {
-      // TODO: Implement. For now, just check that it's not null
-      return pubkey != null;
-    }
-
+    
     // User data rules
     match /users/{userID} {
+      function encPrivkeyPkcs8IsValid(encPrivkey) {
+        // TODO: implement. For now, just check that it's not null
+        return encPrivkey != null;
+      }
+
+      function passkeySaltIsValid(salt) {
+        // TODO: implement. For now, just check that it's not null
+        return salt != null;
+      }
+
       // Ensure that the user document is allowed
       function userIsValid() {
         return userIsOwner(userID) &&
-        // Make sure the fingerprint is valid
-        fingerprintIsValid(request.resource.data["pubkey_fingerprint"])
+        fingerprintIsValid(request.resource.data["pubkey_fingerprint"]) &&
+        encPrivkeyPkcs8IsValid(request.resource.data["enc_privkey_pkcs8"]) &&
+        passkeySaltIsValid(request.resource.data["passkey_salt"]);
       }
       
       allow read: if userIsOwner(userID);
@@ -41,9 +47,12 @@ service cloud.firestore {
 
     // PubKey rules
     match /pubkeys/{pubkey_fingerprint}  {
+      function pubkeyIsSpki(pubkey) {
+        // TODO: Implement. For now, just check that it's not null
+        return pubkey != null;
+      }
+
       function pubkeyIsValid() {
-        // Make sure the ID is a 16 character hex string
-        // TODO: Verify length?
         return fingerprintIsValid(pubkey_fingerprint) &&
         pubkeyIsSpki(request.resource.data["spki"]) &&
         userIsOwner(request.resource.data["owner"]);

@@ -10,7 +10,7 @@ import User, { UserData } from '@/lib/entities/user';
 import PubKey, { PubKeyData } from '@/lib/entities/pubkey';
 import * as userDb from '@/lib/db/user';
 import * as pubkeyDb from '@/lib/db/pubkey';
-import KeyStore, { clear as clearKeyStore } from '@/lib/crypto/keystore';
+import TombKeyStore from '@/lib/crypto/tomb/keystore';
 import { exists as keystoreExists } from '@/lib/crypto/idb';
 import { fingerprint } from '@/lib/crypto/utils';
 
@@ -31,7 +31,7 @@ export const SessionContext = createContext<{
 
 export const SessionProvider = ({ children }: any) => {
   const [user, setUser] = useState<User | null>(null);
-  const [ keystore, setKeystore ] = useState<KeyStore | null>(null)
+  const [ keystore, setKeystore ] = useState<TombKeyStore | null>(null)
   const [ error, setError ] = useState<string>('')
 
   /* Helpers */ 
@@ -39,10 +39,11 @@ export const SessionProvider = ({ children }: any) => {
   // Initialize a keystore pointed by the user's uid
   const getKeystore = async (uid: string) => {
     const storeName = KEY_STORE_NAME + '-' + uid
-    if (await keystoreExists(storeName)) {
+    if (keystore) {
       return keystore;
     }
-    const ks = await KeyStore.init({ storeName })
+    // Deffaults are fine here
+    const ks = await TombKeyStore.init({ storeName })
     setKeystore(ks);
     return ks;
   }
@@ -50,64 +51,57 @@ export const SessionProvider = ({ children }: any) => {
   // Register a new user in firestore
   const registerUser = async (firebaseUser: FirebaseUser, passphrase: string): Promise<void> => {
     // Get the uid of the new user
-    const owner = firebaseUser.uid;
+    const owner: string = firebaseUser.uid;
     // Get the keystore for the user from the browser
     const ks = await getKeystore(owner);
-
-    // TODO: Get rid of this if statement -- i'm p sure this is always defined
-    if (ks) {
-      // Generate a new keypair for the user 
-      await ks.makeKeyPair();
-
-      // Export the public key -- it's a pkcs8 format
-      const { publicKey, encPrivateKey } = await ks.exportEncryptedKeyPair(passphrase);
-      // Assoicate the public key in the db with the user
-      const pubkey_data = { 
-        spki: publicKey,
-        owner 
-      } as PubKeyData;
-      const id = fingerprint(publicKey);
-      await pubkeyDb.create(id, pubkey_data)
-
-      // Create the user in the db with a reference to the pubkey and the encrypted private key
-      const user_data = { pubkey_fingerprint: id, enc_privkey: encPrivateKey } as UserData;
-      await userDb.create(firebaseUser, user_data);
-    }
+    // Generate a new keypair for the user 
+    await ks.genKeyPair();
+    // Derive a new passkey for the user -- this generates a random salt
+    const passkey_salt: string = await ks.derivePassKey(passphrase);
+    const spki: string = await ks.exportPublicKey();
+    const privkey_pkcs8: string = await ks.exportPrivateKey();
+    const enc_privkey_pkcs8: string = await ks.encryptWithPassKey(privkey_pkcs8);
+    // Assoicate the public key in the db with the user
+    const pubkey_data: PubKeyData = { spki, owner };
+    const pubkey_fingerprint: string = fingerprint(spki);
+    await pubkeyDb.create(pubkey_fingerprint, pubkey_data)
+    // Create the user in the db with a reference to the pubkey and the encrypted private key
+    const user_data: UserData = {
+      pubkey_fingerprint,
+      enc_privkey_pkcs8,
+      passkey_salt,
+    };
+    await userDb.create(firebaseUser, user_data);
   }
 
   const initUserSession = async (firebaseUser: FirebaseUser, passphrase?: string) => {
     console.log('initUserSession')
-    // Get the keystore for the user from the browser
     const ks = await getKeystore(firebaseUser.uid)
-    // TODO: Get rid of this if statement -- i'm p sure this is always defined
-    if (ks) {
-      const user = await userDb.read(firebaseUser);
-      setUser(user);
-      if (user && passphrase) {
-        // Get the user from the db
-        const { pubkey_fingerprint, enc_privkey } = user.data;
-        // Get the public key from the db
-        const pubkey = await pubkeyDb.read(pubkey_fingerprint);
-        // Import the keypair into the keystore if it's not already there
-        await ks.importEncryptedKeyPair(pubkey.data.spki, enc_privkey, passphrase);
-      }
-      // Test the keypair and raise an error if it's not valid
-      const msg = 'hello world';
-      const ciphertext = await ks.encrypt(msg);
-      const plaintext = await ks.decrypt(ciphertext);
-      if (plaintext !== msg) {
-        throw new Error('Keystore is invalid');
-      }
-      console.log('Keystore is valid')
+    const user = await userDb.read(firebaseUser);
+    setUser(user);
+    if (user && passphrase) {
+      const { pubkey_fingerprint, enc_privkey_pkcs8, passkey_salt } = user.data;
+      await ks.derivePassKey(passphrase, passkey_salt);
+      console.log('passkey derived')
+      const pubkey = await pubkeyDb.read(pubkey_fingerprint);
+      const pubkey_spki = pubkey.data.spki;
+      const privkey_pkcs8 = await ks.decryptWithPassKey(enc_privkey_pkcs8);
+      console.log('privkey decrypted')
+      await ks.importKeyPair(pubkey_spki, privkey_pkcs8);
+      console.log('keypair imported')
     }
+    const msg = 'hello world';
+    const ciphertext = await ks.encrypt(msg);
+    const plaintext = await ks.decrypt(ciphertext);
+    if (plaintext !== msg) {
+      throw new Error('Keystore is invalid');
+    }
+    console.log('Keystore is valid')
   }
 
-  const destroyKeystore = async (uid: string) => {
+  const clearKeystore = async (uid: string) => {
     const ks = await getKeystore(uid)
-    if (ks) {
-      await ks.destroy();
-      await clearKeyStore();
-    }
+    await ks.clear();
   }
 
   /* Effects */
@@ -131,7 +125,6 @@ export const SessionProvider = ({ children }: any) => {
   // Set an error alert when an error occurs
   useEffect(() => {
     if (error) {
-      // alert(error)
       console.error(error)
     }
   }, [error]);
@@ -156,7 +149,7 @@ export const SessionProvider = ({ children }: any) => {
     signOut(Auth).then(async () => {
       const uid = user?.firebaseUser.uid
       if (uid) {
-        await destroyKeystore(uid)
+        await clearKeystore(uid)
       }
     });
   };

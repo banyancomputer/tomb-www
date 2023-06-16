@@ -1,13 +1,13 @@
 // User data that exists in firestore
 export interface PubKeyData {
-    // The PKCS8 export of the public key
+    // The SPKI of the user's exported public key, base64 encoded 
     spki: string,
     // The uid of the user who owns the key
     owner: string,
 }
 
 export default interface PubKey {
-    // 8 byte sha1 fingerprint of the public key's pkcs8 export
+    // The sha1 fingerprint of the user's exported public key, hex string
     id: string,
     data: PubKeyData
 }

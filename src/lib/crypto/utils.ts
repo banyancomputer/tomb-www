@@ -3,6 +3,49 @@ import * as uint8arrays from 'uint8arrays'
 import errors from './errors'
 import { CharSize, Msg } from './types'
 import * as crypto from 'crypto'
+import { DEFAULT_SALT_LENGTH } from './constants'
+
+/* Cryto */
+
+// Generate a public exponent
+export function publicExponent(): Uint8Array {
+  return new Uint8Array([0x01, 0x00, 0x01])
+}
+
+// Generate a sha1 fingerprint of a string
+export function fingerprint(str: string): string {
+  const hash = crypto.createHash('sha1')
+  hash.update(str)
+  return hash.digest('hex')
+}
+
+// Generate a random salt
+export function randomSalt(length: number = DEFAULT_SALT_LENGTH): ArrayBuffer {
+  return randomBuf(length, { max: 255 })
+}
+
+/* Normalize _ to ArrayBuffer */
+
+export const normalizeUtf8ToBuf = (msg: Msg): ArrayBuffer => {
+  return normalizeToBuf(msg, (str) => strToArrBuf(str, CharSize.B8))
+}
+
+export const normalizeUtf16ToBuf = (msg: Msg): ArrayBuffer => {
+  return normalizeToBuf(msg, (str) => strToArrBuf(str, CharSize.B16))
+}
+
+export const normalizeBase64ToBuf = (msg: Msg): ArrayBuffer => {
+  return normalizeToBuf(msg, base64ToArrBuf)
+}
+
+export const normalizeUnicodeToBuf = (msg: Msg, charSize: CharSize) => {
+  switch (charSize) {
+    case 8: return normalizeUtf8ToBuf(msg)
+    default: return normalizeUtf16ToBuf(msg)
+  }
+}
+
+/* Array Buffer to _ */
 
 export function arrBufToStr(buf: ArrayBuffer, charSize: CharSize): string {
   const arr = charSize === 8 ? new Uint8Array(buf) : new Uint16Array(buf)
@@ -14,6 +57,8 @@ export function arrBufToStr(buf: ArrayBuffer, charSize: CharSize): string {
 export function arrBufToBase64(buf: ArrayBuffer): string {
   return uint8arrays.toString(new Uint8Array(buf), "base64pad")
 }
+
+/* _ to Array Buffer */
 
 export function strToArrBuf(str: string, charSize: CharSize): ArrayBuffer {
   const view =
@@ -28,9 +73,7 @@ export function base64ToArrBuf(string: string): ArrayBuffer {
   return uint8arrays.fromString(string, "base64pad").buffer
 }
 
-export function publicExponent(): Uint8Array {
-  return new Uint8Array([0x01, 0x00, 0x01])
-}
+/* Misc */
 
 export function randomBuf(length: number, { max }: { max: number } = { max: 255 }): ArrayBuffer {
   if (max < 1 || max > 255) {
@@ -69,24 +112,6 @@ export function joinBufs(fst: ArrayBuffer, snd: ArrayBuffer): ArrayBuffer {
   return joined.buffer
 }
 
-export const normalizeUtf8ToBuf = (msg: Msg): ArrayBuffer => {
-  return normalizeToBuf(msg, (str) => strToArrBuf(str, CharSize.B8))
-}
-
-export const normalizeUtf16ToBuf = (msg: Msg): ArrayBuffer => {
-  return normalizeToBuf(msg, (str) => strToArrBuf(str, CharSize.B16))
-}
-
-export const normalizeBase64ToBuf = (msg: Msg): ArrayBuffer => {
-  return normalizeToBuf(msg, base64ToArrBuf)
-}
-
-export const normalizeUnicodeToBuf = (msg: Msg, charSize: CharSize) => {
-  switch (charSize) {
-    case 8: return normalizeUtf8ToBuf(msg)
-    default: return normalizeUtf16ToBuf(msg)
-  }
-}
 
 export const normalizeToBuf = (msg: Msg, strConv: (str: string) => ArrayBuffer): ArrayBuffer => {
   if (typeof msg === 'string') {
@@ -100,15 +125,6 @@ export const normalizeToBuf = (msg: Msg, strConv: (str: string) => ArrayBuffer):
   }
 }
 
-/**
- * Generate a sha1 fingerprint of a string -- take the first 8 bytes as the fingerprint
- */
-export function fingerprint(str: string): string {
-  const hash = crypto.createHash('sha1')
-  hash.update(str)
-  return hash.digest('hex')
-}
-
 /* istanbul ignore next */
 export async function structuralClone(obj: any) {
   return new Promise(resolve => {
@@ -119,6 +135,8 @@ export async function structuralClone(obj: any) {
 }
 
 export default {
+  fingerprint,
+  randomSalt,
   arrBufToStr,
   arrBufToBase64,
   strToArrBuf,
