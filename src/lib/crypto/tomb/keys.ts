@@ -23,18 +23,6 @@ export async function makeKeypair(
   )
 }
 
-function stripPrivateKeyHeader(base64Key: string): string{
-  return base64Key
-    .replace('-----BEGIN PRIVATE KEY-----\n', '')
-    .replace('\n-----END PRIVATE KEY-----', '')
-}
-
-function stripPublicKeyHeader(base64Key: string): string{
-  return base64Key
-    .replace('-----BEGIN PUBLIC KEY-----\n', '')
-    .replace('\n-----END PUBLIC KEY-----', '')
-}
-
 export async function importPublicKey(
   base64Key: string,
   alg: AsymmAlg,
@@ -42,7 +30,7 @@ export async function importPublicKey(
   format: ExportKeyFormat
 ): Promise<PublicKey> {
   const uses: KeyUsage[] = ['encrypt']
-  const buf = utils.base64ToArrBuf(stripPublicKeyHeader(base64Key))
+  const buf = utils.base64ToArrBuf(base64Key)
   return webcrypto.subtle.importKey(
     format,
     buf,
@@ -59,7 +47,7 @@ export async function importPrivateKey(
   format: ExportKeyFormat
 ): Promise<CryptoKey> {
   const uses: KeyUsage[] = ['decrypt']
-  const buf = utils.base64ToArrBuf(stripPrivateKeyHeader(base64Key))
+  const buf = utils.base64ToArrBuf(base64Key)
   return webcrypto.subtle.importKey(
     format,
     buf,
