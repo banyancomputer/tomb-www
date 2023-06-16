@@ -32,7 +32,7 @@ docker-compose up
 And run the Firebase emulators in another terminal:
   
 ```bash
-firebase emulators:start --import state --project default
+npm run firebase
 ```
 
 ## Testing
