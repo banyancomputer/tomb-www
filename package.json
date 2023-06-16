@@ -15,6 +15,7 @@
     "format": "prettier --write .",
     "dev": "cross-env NODE_OPTIONS='--inspect' NODE_ENV='development' next dev",
     "firebase": "firebase emulators:start --import state --project default",
+    "firebase:save": "firebase emulators:start --import state --export-on-exit state --project default",
     "prod": "cross-env NODE_ENV='production' next start"
   },
   "dependencies": {
