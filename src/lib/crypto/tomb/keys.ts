@@ -65,9 +65,7 @@ export async function importKeyPair(
   pubFormat: ExportKeyFormat,
   privFormat: ExportKeyFormat,
 ): Promise<CryptoKeyPair> {
-  console.log('importing key pair')
   const pub = await importPublicKey(publicKey, alg, hashAlg, pubFormat)
-  console.log('imported public key')
   const priv = await importPrivateKey(privateKey, alg, hashAlg, privFormat)
   return { publicKey: pub, privateKey: priv }
 }
