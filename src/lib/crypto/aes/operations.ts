@@ -22,7 +22,7 @@ export async function encryptBytes(
     key,
     data
   )
-  return utils.joinBufs(iv, cipherBuf)
+  return utils.joinCipherText(iv, cipherBuf)
 }
 
 export async function decryptBytes(
@@ -32,15 +32,14 @@ export async function decryptBytes(
 ): Promise<ArrayBuffer> {
   const cipherText = utils.normalizeBase64ToBuf(msg)
   const alg = opts?.alg || DEFAULT_SYMM_ALG
-  const iv = cipherText.slice(0, 16)
-  const cipherBytes = cipherText.slice(16)
+  const [iv, cipher] = utils.splitCipherText(cipherText)
   const msgBuff = await webcrypto.subtle.decrypt(
     { 
       name: alg,
       iv
     },
     key,
-    cipherBytes
+    cipher
   )
   return msgBuff
 }

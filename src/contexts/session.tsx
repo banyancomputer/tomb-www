@@ -42,7 +42,7 @@ export const SessionProvider = ({ children }: any) => {
     if (keystore) {
       return keystore;
     }
-    // Deffaults are fine here
+    // Defaults are fine here
     const ks = await TombKeyStore.init({ storeName })
     setKeystore(ks);
     return ks;
@@ -71,32 +71,33 @@ export const SessionProvider = ({ children }: any) => {
       enc_privkey_pkcs8,
       passkey_salt,
     };
-    await userDb.create(firebaseUser, user_data);
+    const user = await userDb.create(firebaseUser, user_data);
+    setUser(user);
   }
 
   const initUserSession = async (firebaseUser: FirebaseUser, passphrase?: string) => {
-    console.log('initUserSession')
+    // Get the keystore and user
     const ks = await getKeystore(firebaseUser.uid)
     const user = await userDb.read(firebaseUser);
     setUser(user);
     if (user && passphrase) {
+      // If we can import the private key, then do so.
+      // Read the user's encrypted private key and salt and derive the passkey
       const { pubkey_fingerprint, enc_privkey_pkcs8, passkey_salt } = user.data;
       await ks.derivePassKey(passphrase, passkey_salt);
-      console.log('passkey derived')
+      // Read the user's public key, decrypt the priv key import the keypair into the keystore
       const pubkey = await pubkeyDb.read(pubkey_fingerprint);
       const pubkey_spki = pubkey.data.spki;
       const privkey_pkcs8 = await ks.decryptWithPassKey(enc_privkey_pkcs8);
-      console.log('privkey decrypted')
       await ks.importKeyPair(pubkey_spki, privkey_pkcs8);
-      console.log('keypair imported')
     }
+    // Check that the keystore is valid
     const msg = 'hello world';
     const ciphertext = await ks.encrypt(msg);
     const plaintext = await ks.decrypt(ciphertext);
     if (plaintext !== msg) {
       throw new Error('Keystore is invalid');
     }
-    console.log('Keystore is valid')
   }
 
   const clearKeystore = async (uid: string) => {

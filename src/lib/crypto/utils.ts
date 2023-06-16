@@ -19,6 +19,29 @@ export function fingerprint(str: string): string {
   return hash.digest('hex')
 }
 
+// How we join an iv and cipher into a cipher text
+export function joinCipherText(ivBuf: ArrayBuffer, cipherBuf: ArrayBuffer): ArrayBuffer {
+  const wrapIvBuf = new Uint8Array(ivBuf)
+  const wrapCipherBuf = new Uint8Array(cipherBuf)
+  const delimeter = new Uint8Array(['.'.charCodeAt(0)])
+  const joined = new Uint8Array(
+    wrapIvBuf.length + delimeter.length + wrapCipherBuf.length
+  )
+  joined.set(wrapIvBuf)
+  joined.set(delimeter, wrapCipherBuf.length)
+  joined.set(wrapCipherBuf, wrapIvBuf.length + delimeter.length)
+  return joined.buffer
+}
+
+// How we split a cipher text into an iv and cipher
+export function splitCipherText(cipherText: ArrayBuffer): [ArrayBuffer, ArrayBuffer] {
+  const wrapCipherText = new Uint8Array(cipherText)
+  const delimeter = new Uint8Array(['.'.charCodeAt(0)])
+  const ivBuf = wrapCipherText.slice(0, 16)
+  const cipherBuf = wrapCipherText.slice(16 + delimeter.length)
+  return [ivBuf, cipherBuf]
+}
+
 // Generate a random salt
 export function randomSalt(length: number = DEFAULT_SALT_LENGTH): ArrayBuffer {
   return randomBuf(length, { max: 255 })
@@ -136,6 +159,8 @@ export async function structuralClone(obj: any) {
 
 export default {
   fingerprint,
+  joinCipherText,
+  splitCipherText,
   randomSalt,
   arrBufToStr,
   arrBufToBase64,
