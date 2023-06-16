@@ -31,6 +31,8 @@ Run a development docker container:
 docker-compose up
 ```
 
+The frontend will be available at http://localhost:3000.
+
 ### Local
 
 Run the development server:
@@ -38,6 +40,8 @@ Run the development server:
 ```bash
 npm run dev
 ```
+
+The frontend will be available at http://localhost:3000.
 
 ### Firebase
 
@@ -47,6 +51,10 @@ In addition to runing either docker or the local development server, you'll need
 ```bash
 npm run firebase
 ```
+
+The Firebase emulators UI will be available at http://localhost:4000.
+
+#### Test Data
 
 There is a test user in the Firebase emulator with the following credentials:
 
