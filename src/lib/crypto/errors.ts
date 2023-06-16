@@ -4,6 +4,8 @@ export const NotKey = new Error("Retrieved an asymmetric keypair when an symmetr
 export const UnsupportedCrypto = new Error("Cryptosystem not supported. Please use ECC or RSA")
 export const InvalidKeyUse = new Error("Invalid key use. Please use 'exchange' or 'write")
 export const InvalidMaxValue = new Error("Max must be less than 256 and greater than 0")
+export const InvalidIvLength = new Error("IV must be 16 bytes")
+export const InvalidCipherTextLength = new Error("Cipher text must align on AES-GCM block (16 bytes) boundary")
 
 export function checkIsKeyPair(keypair: any): CryptoKeyPair {
   if (!keypair || keypair === null) {
@@ -32,4 +34,6 @@ export default {
   checkIsKeyPair,
   checkIsKey,
   InvalidMaxValue,
+  InvalidIvLength,
+  InvalidCipherTextLength
 }

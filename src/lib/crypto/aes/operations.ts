@@ -2,6 +2,9 @@ import { webcrypto } from 'one-webcrypto'
 import utils from '../utils'
 import { DEFAULT_SYMM_ALG } from '../constants'
 import { SymmKey, SymmKeyOpts, CipherText, Msg } from '../types'
+import { 
+  InvalidIvLength, InvalidCipherTextLength
+} from '../errors'
 
 // Note: we only support AES-GCM here
 // If you want support for more symmetric key algorithms, add implementations here
@@ -33,6 +36,12 @@ export async function decryptBytes(
   const cipherText = utils.normalizeBase64ToBuf(msg)
   const alg = opts?.alg || DEFAULT_SYMM_ALG
   const [iv, cipher] = utils.splitCipherText(cipherText)
+  // Check lengths
+  if (iv.byteLength !== 16) {
+    throw InvalidIvLength
+  } else if (cipher.byteLength === 0 || cipher.byteLength % 16 !== 0) {
+    throw InvalidCipherTextLength
+  }
   const msgBuff = await webcrypto.subtle.decrypt(
     { 
       name: alg,
