@@ -12,7 +12,6 @@ import * as userDb from '@/lib/db/user';
 import * as pubkeyDb from '@/lib/db/pubkey';
 import TombKeyStore from '@/lib/crypto/tomb/keystore';
 import { exists as keystoreExists } from '@/lib/crypto/idb';
-import { fingerprint } from '@/lib/crypto/utils';
 
 const KEY_STORE_NAME = 'key-store'
 
@@ -63,7 +62,7 @@ export const SessionProvider = ({ children }: any) => {
     const enc_privkey_pkcs8: string = await ks.encryptWithPassKey(privkey_pkcs8);
     // Assoicate the public key in the db with the user
     const pubkey_data: PubKeyData = { spki, owner };
-    const pubkey_fingerprint: string = fingerprint(spki);
+    const pubkey_fingerprint: string = await ks.fingerprintPublicKey();
     await pubkeyDb.create(pubkey_fingerprint, pubkey_data)
     // Create the user in the db with a reference to the pubkey and the encrypted private key
     const user_data: UserData = {

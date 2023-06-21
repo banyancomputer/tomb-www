@@ -3,9 +3,9 @@ import * as common from '../common'
 import idb from '../idb'
 import utils from '../utils'
 import config from '../config'
-import { Config, PublicKey, PrivateKey } from '../types'
+import { Config, PublicKey, PrivateKey, ExportKeyFormat } from '../types'
 import { checkIsKeyPair, KeyDoesNotExist } from '../errors'
-
+import * as crypto from 'crypto'
 
 export default class KeyStoreBase {
 
@@ -38,6 +38,16 @@ export default class KeyStoreBase {
     const maybeKey = await idb.getKeypair(this.cfg.keyPairName, this.store)
     return checkIsKeyPair(maybeKey)
   }
+
+  async fingerprintPublicKey(): Promise<string> {
+    const keyPair = await this.keyPair()
+    const bytes = await common.exportKeyBytes(keyPair.publicKey as PublicKey, ExportKeyFormat.SPKI)
+    const hash = crypto.createHash('sha1')
+    hash.update(Buffer.from(bytes))
+    return hash.digest('hex')
+  }
+
+
 
   async exportPublicKey(): Promise<string> {
     const mergedCfg = config.merge(this.cfg)

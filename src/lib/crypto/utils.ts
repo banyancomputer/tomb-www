@@ -12,13 +12,6 @@ export function publicExponent(): Uint8Array {
   return new Uint8Array([0x01, 0x00, 0x01])
 }
 
-// Generate a sha1 fingerprint of a string
-export function fingerprint(str: string): string {
-  const hash = crypto.createHash('sha1')
-  hash.update(str)
-  return hash.digest('hex')
-}
-
 // How we join an iv and cipher into a cipher text
 export function joinCipherText(ivBuf: ArrayBuffer, cipherBuf: ArrayBuffer): ArrayBuffer {
   const wrapIvBuf = new Uint8Array(ivBuf)
@@ -158,7 +151,6 @@ export async function structuralClone(obj: any) {
 }
 
 export default {
-  fingerprint,
   joinCipherText,
   splitCipherText,
   randomSalt,
