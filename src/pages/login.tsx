@@ -4,11 +4,11 @@ import { NextPageWithLayout } from '@/pages/page';
 import LoadingSpinner from '@/components/utils/spinners/loading/LoadingSpinner';
 import PublicLayout from '@/layouts/public/PublicLayout';
 import PublicRoute from '@/components/utils/routes/Public';
-import { useAuth } from '@/contexts/session';
+import { useSession } from '@/contexts/session';
 import { useRouter } from 'next/router';
 
 const Login: NextPageWithLayout = ({}) => {
-	const { user, logIn } = useAuth();
+	const { user, logIn } = useSession();
 	const router = useRouter();
 	// const [loading, setLoading] = useState(false);
 	const [values, setValues] = useState({ email: '', password: '' });

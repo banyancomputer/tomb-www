@@ -9,7 +9,7 @@ import Account from '@/images/icons/Account';
 import Disconnect from '@/images/icons/Disconnect';
 import { CloseIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
-import { useAuth } from '@/contexts/session';
+import { useSession } from '@/contexts/session';
 
 // TOOD
 
@@ -29,7 +29,7 @@ const navItemsUpper = [
 export interface ISideNav {}
 // @ts-ignore
 const SideNav: React.FC<ISideNav> = ({ children }) => {
-	const { logOut } = useAuth();
+	const { logOut } = useSession();
 	const [checked, setChecked] = useState(false);
 	const navItemsLower = [
 		{

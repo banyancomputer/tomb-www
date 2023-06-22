@@ -1,9 +1,12 @@
 export interface BucketData {
 	owner: string;
-	rootCid: string;
+	// rootCid: string;
 }
 
 export default interface Bucket {
 	id: string;
-	data: BucketData;
+	// data: BucketData;
+	name: string;
+	owner: string;
+	entrypoint: string;
 }

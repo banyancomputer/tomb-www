@@ -7,11 +7,11 @@ import {
 	User as FirebaseUser,
 } from 'firebase/auth';
 import User, { UserData } from '@/lib/entities/user';
-import PubKey, { PubKeyData } from '@/lib/entities/pubkey';
+import { PubKeyData } from '@/lib/entities/pubkey';
 import * as userDb from '@/lib/db/user';
 import * as pubkeyDb from '@/lib/db/pubkey';
 import TombKeyStore from '@/lib/crypto/tomb/keystore';
-import { exists as keystoreExists } from '@/lib/crypto/idb';
+import { Tomb } from '../../../tomb/tomb-wasm/pkg/tomb_wasm';
 
 const KEY_STORE_NAME = 'key-store';
 
@@ -21,15 +21,18 @@ export const SessionContext = createContext<{
 	signUp: (email: string, password: string) => Promise<void>;
 	logIn: (email: string, password: string) => Promise<void>;
 	logOut: () => Promise<void>;
+	tomb: Tomb | null;
 }>({
 	user: null,
 	signUp: async (email: string, password: string) => {},
 	logIn: async (email: string, password: string) => {},
 	logOut: async () => {},
+	tomb: null,
 });
 
 export const SessionProvider = ({ children }: any) => {
 	const [user, setUser] = useState<User | null>(null);
+	const [tomb, setTomb] = useState<Tomb | null>(null); // TODO: Replace with Tomb type
 	const [keystore, setKeystore] = useState<TombKeyStore | null>(null);
 	const [error, setError] = useState<string>('');
 
@@ -105,6 +108,11 @@ export const SessionProvider = ({ children }: any) => {
 		if (plaintext !== msg) {
 			throw new Error('Keystore is invalid');
 		}
+
+		// Initialize the tomb
+		const tomb = new Tomb();
+		tomb.init();
+		setTomb(tomb);
 	};
 
 	const clearKeystore = async (uid: string) => {
@@ -168,10 +176,10 @@ export const SessionProvider = ({ children }: any) => {
 
 	return (
 		// @ts-ignore
-		<SessionContext.Provider value={{ user, signUp, logIn, logOut }}>
+		<SessionContext.Provider value={{ user, signUp, logIn, logOut, tomb }}>
 			{children}
 		</SessionContext.Provider>
 	);
 };
 
-export const useAuth = () => useContext(SessionContext);
+export const useSession = () => useContext(SessionContext);

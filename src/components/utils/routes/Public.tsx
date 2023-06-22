@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useAuth } from '@/contexts/session';
+import { useSession } from '@/contexts/session';
 import React, { useEffect } from 'react';
 // import LoadingSpinner from '@/components/utils/spinners/loading/LoadingSpinner';
 
@@ -10,7 +10,7 @@ export interface IPublicRoute {}
 // @ts-ignore
 const PublicRoute: React.FC<IPublicRoute> = ({ children }) => {
 	// const { user, userLoading } = useAuth();
-	const { user } = useAuth();
+	const { user } = useSession();
 	const router = useRouter();
 
 	useEffect(() => {

@@ -8,11 +8,11 @@ import { passwordStrength } from 'check-password-strength';
 
 // import { AsYouType } from 'libphonenumber-js';
 // import PublicRoute from '@/components/utils/routes/Public';
-import { useAuth } from '@/contexts/session';
+import { useSession } from '@/contexts/session';
 
 const Register: NextPageWithLayout = ({}) => {
 	const router = useRouter();
-	const { signUp } = useAuth();
+	const { signUp } = useSession();
 	const [values, setValues] = useState({
 		email: '',
 		password: '',

@@ -16,7 +16,7 @@ import NoUploadScreen from '@/components/utils/screens/NoUploadScreen';
 import Bucket, { BucketData } from '@/lib/entities/bucket';
 import * as bucketDb from '@/lib/db/bucket';
 import { useRouter } from 'next/router';
-import { useAuth } from '@/contexts/session';
+import { useSession } from '@/contexts/session';
 import ChangeModal from '@/components/modals/input/InputModal';
 export interface IDashboard {}
 
@@ -37,7 +37,7 @@ const customStyles = {
 const Dashboard: NextPageWithLayout<IDashboard> = () => {
 	const router = useRouter();
 	const { isOpen, onOpen, onClose } = useDisclosure();
-	const { user } = useAuth();
+	const { user, tomb } = useSession();
 	const [error, setError] = useState<string>('');
 	const [buckets, setBuckets] = useState<Bucket[]>([]);
 	const [newBucketId, setNewBucketId] = useState<string>('');
@@ -47,70 +47,46 @@ const Dashboard: NextPageWithLayout<IDashboard> = () => {
 		if (!user) {
 			router.push('/login');
 		}
-	}, [user]);
+		if (tomb) {
+			setBuckets([
+				{
+					id: 'test',
+					name: 'test',
+					owner: 'test',
+					entrypoint: 'test',
+			}]);
+		}
+	}, [user, tomb]);
 
 	const handleNewBucket = async () => {
 		if (user) {
 			console.log('new bucket: ' + newBucketId);
-			// createBucket(user.uid, newBucketId)
-			//   .then((bucket: Bucket) => {
-			//     console.log('Created new bucket');
-			//     buckets.push(bucket);
-			//     setNewBucketId('');
-			//     onClose();
-			//   })
-			//   .catch((err) => {
-			//     console.log(err);
-			//     setError(err.message);
-			//   }
-			// );
 		}
 	};
 
 	const overviewColumns = [
 		{
-			name: 'BUCKET NAME',
+			name: 'BUCKET ID',
 			selector: (row: Bucket) => row.id,
+			sortable: true,
+		},
+		{
+			name: 'BUCKET NAME',
+			selector: (row: Bucket) => row.name,
 			sortable: true,
 		},
 	];
 
-	const handleRemoveBucket = async (bucketId: string) => {
-		if (user) {
-			// removeBucket(bucketId)
-			//   .then(() => {
-			//     console.log('Deleted bucket');
-			//     setBuckets(buckets.filter((bucket) => bucket.id !== bucketId));
-			//   }
-			// );
-		}
-	};
-
-	const ExpandedComponentOverView = ({ data }: any) => (
-		<div className="flex flex-row text-white">
-			{/* <button
-        className="w-full bg-[#0398fc]"
-        onClick={() => {
-          console.log("huh")
-          router.push('/blocks/' + data.id)
-        }}
-      >
-        Open Block View
-      </button> */}
-			{/* <button
-        className="w-full bg-[#16181B]"
-        onClick={() => router.push('/files/' + data.id)}
-      >
-        Open File View
-      </button> */}
-			<button
-				className="w-full bg-[#CB3535] "
-				onClick={async () => handleRemoveBucket(data.id)}
-			>
-				Delete Bucket
-			</button>
-		</div>
-	);
+	// const ExpandedComponentOverView = ({ data }: any) => (
+	// 	<div className="flex flex-row text-white">
+	// 		<button
+	// 			className="w-full bg-[#CB3535] "
+	// 			onClick={async () => handleRemoveBucket(data.id)}
+	// 		>
+	// 			Delete Bucket
+	// 		</button>
+	// 	</div>
+	// );
 
 	const applyFilters = () => {
 		let filtered = buckets;
@@ -131,8 +107,6 @@ const Dashboard: NextPageWithLayout<IDashboard> = () => {
 
 	return (
 		<div className="overflow-auto">
-			{/* <AuthorizedRoute> */}
-
 			<div className="border-t-2 border-t-[#000] pb-44">
 				<div className="flex mt-4">
 					<Button
@@ -149,7 +123,6 @@ const Dashboard: NextPageWithLayout<IDashboard> = () => {
 							onClose={onClose}
 							changeName="Create a new Bucket"
 							onChangeValue={(e: any) => {
-								// console.log(e.target.value);
 								setNewBucketId(e.target.value);
 							}}
 							changeInputId="bucketId"
@@ -188,10 +161,9 @@ const Dashboard: NextPageWithLayout<IDashboard> = () => {
 				columns={overviewColumns}
 				data={applyFilters()}
 				customStyles={customStyles}
-				expandableRows
-				expandableRowsComponent={ExpandedComponentOverView}
+				// expandableRows
+				// expandableRowsComponent={ExpandedComponentOverView}
 			/>
-			{/* </AuthorizedRoute> */}
 		</div>
 	);
 };

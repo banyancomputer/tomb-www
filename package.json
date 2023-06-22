@@ -47,7 +47,8 @@
 		"typescript": "5.0.2",
 		"uid": "^2.0.1",
 		"validator": "^13.9.0",
-		"woo-woo-wasm": "^0.1.0"
+		"woo-woo-wasm": "^0.1.0",
+		"tomb-wasm": "../tomb/tomb-wasm/pkg"
 	},
 	"devDependencies": {
 		"@types/validator": "^13.7.14",

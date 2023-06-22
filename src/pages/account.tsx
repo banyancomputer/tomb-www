@@ -3,13 +3,13 @@ import AuthedLayout from '@/layouts/authed/AuthedLayout';
 import AuthorizedRoute from '@/components/utils/routes/Authorized';
 import { useEffect, useState } from 'react';
 import LoadingScreen from '@/components/utils/screens/LoadingScreen';
-import { useAuth } from '@/contexts/session';
+import { useSession } from '@/contexts/session';
 import KeyCard from '@/components/cards/key/KeyCard';
 import AccountInfoCard from '@/components/cards/account/AccountInfoCard';
 import * as userDb from '@/lib/db/user';
 
 const Account: NextPageWithLayout = ({}) => {
-	const { user } = useAuth();
+	const { user } = useSession();
 	const [keys, setKeys] = useState<string[]>([]);
 	const [error, setError] = useState<string>('');
 	// const { isOpen, onOpen, onClose } = useDisclosure();
