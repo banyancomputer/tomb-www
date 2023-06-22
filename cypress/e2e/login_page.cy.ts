@@ -8,7 +8,7 @@
 //         cy.get('input#password')
 //         .type('testpassword')
 //         .should('have.value', 'testpassword');
-       
+
 //         cy.get('button[type="submit"]').click()
 //         cy.url().should('include', '/')
 
@@ -20,7 +20,7 @@
 
 //         cy.get('div').contains('Log Out').click();
 //         cy.url().should('include', '/login');
-        
+
 //     });
 //   });
 
@@ -34,16 +34,16 @@
 //         cy.get('input#password')
 //         .type('testpassword')
 //         .should('have.value', 'testpassword');
-       
+
 //         cy.get('button[type="submit"]').click()
 //         cy.url().should('include', '/')
 
 //         cy.get('[data-testid="expander-button-1"]')
-//         .click(); 
+//         .click();
 
-//         cy.get('button') 
+//         cy.get('button')
 //         .contains('Open File View')
-//         .click(); 
+//         .click();
 
 //         cy.get('a[href="/upload-portal"]').click();
 //         cy.url().should('include', '/upload-portal');
@@ -53,9 +53,6 @@
 
 //         cy.get('div').contains('Log Out').click();
 //         cy.url().should('include', '/login');
-        
+
 //     });
 //   });
-
-
-  

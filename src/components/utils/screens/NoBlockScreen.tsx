@@ -5,13 +5,13 @@ import { SiTwitter, SiMedium, SiInstagram, SiDiscord } from 'react-icons/si';
 import Link from 'next/link';
 
 const NoBlockScreen = () => {
-  return (
-    <div className="h-screen flex justify-center content-center">
-      <div className="text-xl font-medium mt-auto mb-auto">
-        You don&apos;t have any blocks in this bucket.
-      </div>
-    </div>
-  );
+	return (
+		<div className="h-screen flex justify-center content-center">
+			<div className="text-xl font-medium mt-auto mb-auto">
+				You don&apos;t have any blocks in this bucket.
+			</div>
+		</div>
+	);
 };
 
 export default NoBlockScreen;

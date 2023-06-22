@@ -9,17 +9,18 @@ import React, { useEffect } from 'react';
 export interface IPublicRoute {}
 // @ts-ignore
 const PublicRoute: React.FC<IPublicRoute> = ({ children }) => {
-  // const { user, userLoading } = useAuth();
-  const { user } = useAuth();
-  const router = useRouter();
+	// const { user, userLoading } = useAuth();
+	const { user } = useAuth();
+	const router = useRouter();
 
-  useEffect(() => {
-    if (user) { //  && !userLoading) {
-      router.push('/').then(() => window.scrollTo(0, 0));
-    }
-  }, [user]);
+	useEffect(() => {
+		if (user) {
+			//  && !userLoading) {
+			router.push('/').then(() => window.scrollTo(0, 0));
+		}
+	}, [user]);
 
-  return <>{children}</>;
+	return <>{children}</>;
 };
 
 export default PublicRoute;
