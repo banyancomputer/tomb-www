@@ -1,29 +1,27 @@
-import { webcrypto } from 'one-webcrypto'
-import utils from '../utils'
+import { webcrypto } from 'one-webcrypto';
+import utils from '../utils';
 import {
   DEFAULT_SYMM_ALG,
   DEFAULT_SYMM_LEN,
-  // DEFAULT_SYMM_KEY_FORMAT,
 } from '../constants'
-import { ExportKeyFormat } from '../types'
-import { SymmKey, SymmKeyOpts, HashAlg } from '../types'
+import { SymmKey, SymmKeyOpts, HashAlg, ExportKeyFormat } from '../types'
 
 export async function makeKey(opts?: Partial<SymmKeyOpts>): Promise<SymmKey> {
-  return webcrypto.subtle.generateKey(
-    {
-      name: opts?.alg || DEFAULT_SYMM_ALG,
-      length: opts?.length || DEFAULT_SYMM_LEN,
-    },
-    true,
-    ['encrypt', 'decrypt']
-  )
+	return webcrypto.subtle.generateKey(
+		{
+			name: opts?.alg || DEFAULT_SYMM_ALG,
+			length: opts?.length || DEFAULT_SYMM_LEN,
+		},
+		true,
+		['encrypt', 'decrypt']
+	);
 }
 
 export async function deriveKey(
-  seed: string, 
-  salt: ArrayBuffer,
-  hashAlg: HashAlg,
-  opts?: Partial<SymmKeyOpts>,
+	seed: string,
+	salt: ArrayBuffer,
+	hashAlg: HashAlg,
+	opts?: Partial<SymmKeyOpts>
 ): Promise<SymmKey> {
   const enc = new TextEncoder()
   let baseKey = await webcrypto.subtle.importKey(
@@ -66,7 +64,7 @@ export async function importKey(base64key: string, opts?: Partial<SymmKeyOpts>):
 }
 
 export default {
-  makeKey,
-  deriveKey,
-  importKey,
-}
+	makeKey,
+	deriveKey,
+	importKey,
+};

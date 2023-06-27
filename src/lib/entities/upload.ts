@@ -1,4 +1,4 @@
-export default {}
+export default {};
 // import { uid } from 'uid';
 // export interface IUpload {
 //   // Uploads have randomly generated IDs.

@@ -1,19 +1,15 @@
 {
+	"apiKey": "AIzaSyCLlg4asKyVzX3s5Xkk72pCiK9dqFJnFxI",
 
-    "apiKey": "AIzaSyCLlg4asKyVzX3s5Xkk72pCiK9dqFJnFxI",
-  
-    "authDomain": "blucket-prod.firebaseapp.com",
-  
-    "projectId": "blucket-prod",
-  
-    "storageBucket": "blucket-prod.appspot.com",
-  
-    "messagingSenderId": "691192131729",
-  
-    "appId": "1:691192131729:web:b6f7bf4cc47faecabd4f30",
-  
-    "measurementId": "G-5GDRS15Y1E"
-  
+	"authDomain": "blucket-prod.firebaseapp.com",
+
+	"projectId": "blucket-prod",
+
+	"storageBucket": "blucket-prod.appspot.com",
+
+	"messagingSenderId": "691192131729",
+
+	"appId": "1:691192131729:web:b6f7bf4cc47faecabd4f30",
+
+	"measurementId": "G-5GDRS15Y1E"
 }
-  
-  

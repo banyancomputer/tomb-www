@@ -1,9 +1,9 @@
 export interface BucketData {
-    owner: string
-    rootCid: string
+	owner: string;
+	rootCid: string;
 }
 
 export default interface Bucket {
-    id: string
-    data: BucketData
+	id: string;
+	data: BucketData;
 }

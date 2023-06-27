@@ -20,13 +20,13 @@ npm install
 ### Docker
 
 Build a development docker image:
-  
+
 ```bash
 docker-compose build
 ```
 
 Run a development docker container:
-  
+
 ```bash
 docker-compose up
 ```
@@ -36,7 +36,7 @@ The frontend will be available at http://localhost:3000.
 ### Local
 
 Run the development server:
-  
+
 ```bash
 npm run dev
 ```
@@ -46,8 +46,8 @@ The frontend will be available at http://localhost:3000.
 ### Firebase
 
 In addition to runing either docker or the local development server, you'll need to
- run the Firebase emulators in another terminal:
-  
+run the Firebase emulators in another terminal:
+
 ```bash
 npm run firebase
 ```
@@ -66,7 +66,7 @@ password: iamatest
 You can use this user to login to the app and test the functionality.
 
 The above command won't keep state between runs, if you'd like to save state run the following command instead:
-  
+
 ```bash
 npm run firebase:save
 ```
