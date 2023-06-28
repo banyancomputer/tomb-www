@@ -108,7 +108,7 @@ export const TombProvider = ({ children }: any) => {
 		if (!keystore) {
 			throw new Error('Keystore not initialized');
 		}
-		return fingerprint(await keystore.exportPublicKey());
+		return await keystore.fingerprintPublicKey(); 
 	};
 
 	// Purge the keystore from storage
@@ -158,15 +158,15 @@ export const TombProvider = ({ children }: any) => {
 		);
 		// Assoicate the public key in the db with the user
 		const pubkey_data: PubKeyData = { spki, owner };
-		const pubkey_fingerprint: string = fingerprint(spki);
+		const pubkey_fingerprint: string = await ks.fingerprintPublicKey();
 		await pubkeyDb.create(pubkey_fingerprint, pubkey_data);
 		// Create the user in the db with a reference to the pubkey and the encrypted private key
-		const user_data: PrivKeyData = {
+		const privkey_data: PrivKeyData = {
 			pubkey_fingerprint,
 			enc_privkey_pkcs8,
 			passkey_salt,
 		};
-		await privkeyDb.create(owner, user_data);
+		await privkeyDb.create(owner, privkey_data);
 	};
 
 	const initKeystore = async (
@@ -174,7 +174,7 @@ export const TombProvider = ({ children }: any) => {
 		privkeyData: PrivKeyData,
 		passphrase: string
 	) => {
-		// Get the keystore and user
+		// Get the keystore by the user's uid 
 		const ks = await getKeystore(firebaseUser.uid);
 
 		// Check if the user's keystore is already initialized

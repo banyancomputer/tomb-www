@@ -11,8 +11,8 @@ export async function exportKey(
 }
 
 export async function exportKeyBytes(
-    key: CryptoKey, 
-    format: ExportKeyFormat
+	key: CryptoKey,
+	format: ExportKeyFormat
 ): Promise<ArrayBuffer> {
-    return await webcrypto.subtle.exportKey(format, key)
+	return await webcrypto.subtle.exportKey(format, key);
 }

@@ -7,15 +7,15 @@ export type PublicKey = CryptoKey;
 export type PrivateKey = CryptoKey;
 
 export type Config = {
-  // Asymmetric Configuration
-  type: CryptoSystem
-  rsaSize: RsaSize
-  asymmAlg: AsymmAlg
+	// Asymmetric Configuration
+	type: CryptoSystem;
+	rsaSize: RsaSize;
+	asymmAlg: AsymmAlg;
 
-  // Symmetric Configuration
-  symmAlg: SymmAlg
-  symmLen: SymmKeyLength
-  saltLen: number
+	// Symmetric Configuration
+	symmAlg: SymmAlg;
+	symmLen: SymmKeyLength;
+	saltLen: number;
 
 	// Hash Configuration
 	hashAlg: HashAlg;
@@ -28,10 +28,10 @@ export type Config = {
 };
 
 export type SymmKeyOpts = {
-  alg: SymmAlg
-  length: SymmKeyLength
-  iv: ArrayBuffer
-}
+	alg: SymmAlg;
+	length: SymmKeyLength;
+	iv: ArrayBuffer;
+};
 
 // Helper type for exporting keys
 export enum ExportKeyFormat {

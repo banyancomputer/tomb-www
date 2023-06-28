@@ -47,34 +47,12 @@ export class TombKeyStore extends KeyStoreBase implements KeyStore {
 					publicKey,
 					privateKey,
 					mergedCfg.asymmAlg,
-					mergedCfg.hashAlg,
-					mergedCfg.publicKeyFormat,
-					mergedCfg.privateKeyFormat
+					mergedCfg.hashAlg
 				),
 			this.store
 		);
 	}
 
-<<<<<<< HEAD
-  /**
-   * Import an asymm keypair and store it in IndexedDB
-   */
-  async importKeyPair(
-    publicKey: string,
-    privateKey: string,
-    cfg?: Partial<Config>
-  ): Promise<void> {
-    const mergedCfg = config.merge(this.cfg, cfg)
-    await IDB.createIfDoesNotExist(this.cfg.keyPairName, () => (
-        keys.importKeyPair(
-            publicKey,
-            privateKey,
-            mergedCfg.asymmAlg,
-            mergedCfg.hashAlg
-          )
-    ), this.store)
-  }
-=======
 	/**
 	 * Derive a new symm pass-key and store it in IndexedDB
 	 */
@@ -100,7 +78,6 @@ export class TombKeyStore extends KeyStoreBase implements KeyStore {
 		);
 		return saltStr ?? utils.arrBufToBase64(saltBuf);
 	}
->>>>>>> 1b114e8 (feat: google auth)
 
 	/* Operations Interface */
 

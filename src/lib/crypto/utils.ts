@@ -165,19 +165,19 @@ export async function structuralClone(obj: any) {
 }
 
 export default {
-  joinCipherText,
-  splitCipherText,
-  randomSalt,
-  arrBufToStr,
-  arrBufToBase64,
-  strToArrBuf,
-  base64ToArrBuf,
-  publicExponent,
-  randomBuf,
-  joinBufs,
-  normalizeUtf8ToBuf,
-  normalizeUtf16ToBuf,
-  normalizeBase64ToBuf,
-  normalizeToBuf,
-  structuralClone
-}
+	joinCipherText,
+	splitCipherText,
+	randomSalt,
+	arrBufToStr,
+	arrBufToBase64,
+	strToArrBuf,
+	base64ToArrBuf,
+	publicExponent,
+	randomBuf,
+	joinBufs,
+	normalizeUtf8ToBuf,
+	normalizeUtf16ToBuf,
+	normalizeBase64ToBuf,
+	normalizeToBuf,
+	structuralClone,
+};

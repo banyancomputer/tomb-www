@@ -53,7 +53,9 @@ const Account: NextPageWithLayout = ({}) => {
 				onClose();
 				Router.reload();
 			})
-			.catch((_) => setError('Invalid passkey. Are you sure you remembered it correctly?'));
+			.catch((_) =>
+				setError('Invalid passkey. Are you sure you remembered it correctly?')
+			);
 	};
 
 	const handlePurgeKeystore = () => {
@@ -68,11 +70,9 @@ const Account: NextPageWithLayout = ({}) => {
 				console.log('App: Keystore purged');
 				setError(null);
 				Router.reload();
-			}
-			)
+			})
 			.catch((_) => setError('Failed to purge keystore'));
 	};
-
 
 	return (
 		<>

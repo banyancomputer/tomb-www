@@ -24,57 +24,14 @@ export async function makeKeypair(
 }
 
 export async function importPublicKey(
-<<<<<<< HEAD
-  base64Key: string,
-  alg: AsymmAlg,
-  hashAlg: HashAlg,
-): Promise<PublicKey> {
-  const uses: KeyUsage[] = ['encrypt']
-  const buf = utils.base64ToArrBuf(base64Key)
-  return webcrypto.subtle.importKey(
-    ExportKeyFormat.SPKI,
-    buf,
-    { name: alg, hash: {name: hashAlg}},
-    true,
-    uses
-  )
-}
-
-export async function importPrivateKey(
-  base64Key: string,
-  alg: AsymmAlg,
-  hashAlg: HashAlg,
-): Promise<CryptoKey> {
-  const uses: KeyUsage[] = ['decrypt']
-  const buf = utils.base64ToArrBuf(base64Key)
-  return webcrypto.subtle.importKey(
-    ExportKeyFormat.PKCS8,
-    buf,
-    { name: alg, hash: {name: hashAlg}},
-    true,
-    uses
-  )
-}
-
-export async function importKeyPair(
-  publicKey: string,
-  privateKey: string,
-  alg: AsymmAlg,
-  hashAlg: HashAlg
-): Promise<CryptoKeyPair> {
-  const pub = await importPublicKey(publicKey, alg, hashAlg)
-  const priv = await importPrivateKey(privateKey, alg, hashAlg)
-  return { publicKey: pub, privateKey: priv }
-=======
 	base64Key: string,
 	alg: AsymmAlg,
-	hashAlg: HashAlg,
-	format: ExportKeyFormat
+	hashAlg: HashAlg
 ): Promise<PublicKey> {
 	const uses: KeyUsage[] = ['encrypt'];
 	const buf = utils.base64ToArrBuf(base64Key);
 	return webcrypto.subtle.importKey(
-		format,
+		ExportKeyFormat.SPKI,
 		buf,
 		{ name: alg, hash: { name: hashAlg } },
 		true,
@@ -85,13 +42,12 @@ export async function importKeyPair(
 export async function importPrivateKey(
 	base64Key: string,
 	alg: AsymmAlg,
-	hashAlg: HashAlg,
-	format: ExportKeyFormat
+	hashAlg: HashAlg
 ): Promise<CryptoKey> {
 	const uses: KeyUsage[] = ['decrypt'];
 	const buf = utils.base64ToArrBuf(base64Key);
 	return webcrypto.subtle.importKey(
-		format,
+		ExportKeyFormat.PKCS8,
 		buf,
 		{ name: alg, hash: { name: hashAlg } },
 		true,
@@ -103,14 +59,11 @@ export async function importKeyPair(
 	publicKey: string,
 	privateKey: string,
 	alg: AsymmAlg,
-	hashAlg: HashAlg,
-	pubFormat: ExportKeyFormat,
-	privFormat: ExportKeyFormat
+	hashAlg: HashAlg
 ): Promise<CryptoKeyPair> {
-	const pub = await importPublicKey(publicKey, alg, hashAlg, pubFormat);
-	const priv = await importPrivateKey(privateKey, alg, hashAlg, privFormat);
+	const pub = await importPublicKey(publicKey, alg, hashAlg);
+	const priv = await importPrivateKey(privateKey, alg, hashAlg);
 	return { publicKey: pub, privateKey: priv };
->>>>>>> 1b114e8 (feat: google auth)
 }
 
 export default {
