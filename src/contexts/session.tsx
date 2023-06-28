@@ -7,11 +7,10 @@ import {
   User as FirebaseUser
 } from 'firebase/auth';
 import User, { UserData } from '@/lib/entities/user';
-import PubKey, { PubKeyData } from '@/lib/entities/pubkey';
+import { PubKeyData } from '@/lib/entities/pubkey';
 import * as userDb from '@/lib/db/user';
 import * as pubkeyDb from '@/lib/db/pubkey';
 import TombKeyStore from '@/lib/crypto/tomb/keystore';
-import { exists as keystoreExists } from '@/lib/crypto/idb';
 
 const KEY_STORE_NAME = 'key-store'
 

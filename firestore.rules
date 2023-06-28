@@ -9,7 +9,9 @@ service cloud.firestore {
 
     function fingerprintIsValid(fingerprint) {
       // Make sure the ID is a valid sha1 hash
-      return fingerprint.matches("^[0-9a-f]{40}$");
+      // return fingerprint.matches("^[0-9a-f]{40}$");
+      // Make sure the ID is a valid base64 endcoded sha256 hash
+      return fingerprint.matches("^[0-9a-zA-Z\\+\\/]{43}=$");
     }
     
     // User data rules
