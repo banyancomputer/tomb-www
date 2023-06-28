@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, useContext, use } from 'react';
+import { createContext, useState, useEffect, useContext } from 'react';
 import { User as FirebaseUser } from 'firebase/auth';
 import { UserData } from '@/lib/entities/user';
 import { PubKeyData } from '@/lib/entities/pubkey';
@@ -14,16 +14,21 @@ const KEY_STORE_NAME_PREFIX = 'key-store';
 const KEY_PAIR_NAME = 'key-pair';
 const PASS_KEY_NAME = 'pass-key';
 
-
 export const TombContext = createContext<{
+	// A RSA keypair and passkey for the user
 	keystore : TombKeyStore | null;
-	client: any | null;
+	// A Tomb client for the user
+	// client: any | null;
+	// Whether the user has registered a key pair and passkey
 	userIsRegistered: boolean;
+	// Whether the user's keystore has been initialized
 	keystoreInitialized: boolean;
+
+	// Initialize a keystore based on the user's passphrase
 	initializeKeystore: (user: FirebaseUser, passkey: string) => Promise<void>;
 }>({
 	keystore: null,
-	client: null,
+	// client: null,
 	userIsRegistered: false,
 	keystoreInitialized: false,
 	initializeKeystore: async (user: FirebaseUser, passkey: string) => {},
@@ -31,7 +36,7 @@ export const TombContext = createContext<{
 
 export const TombProvider = ({ children }: any) => {
 	const { user } = useAuth();
-	const [client, setClient] = useState<any | null>(null);
+	// const [client, setClient] = useState<any | null>(null);
 	const [keystore, setKeystore] = useState<TombKeyStore | null>(null);
 	const [userIsRegistered, setUserIsRegistered] = useState<boolean>(false);
 	const [keystoreInitialized, setKeystoreInitialized] = useState<boolean>(false);
@@ -65,7 +70,7 @@ export const TombProvider = ({ children }: any) => {
 	// Set the isRegistered state when the keystore is initialized
 	useEffect(() => {
 		const check = async (user: FirebaseUser) => {
-			const { firebaseUser, data } = await userDb.read(user);
+			const { data } = await userDb.read(user);
 			if (data) {
 				setUserIsRegistered(true);
 				setUserData(data);
@@ -73,6 +78,8 @@ export const TombProvider = ({ children }: any) => {
 		}
 		if (user) {
 			check(user);
+		} else {
+			setError('No visible user found');
 		}
 	}, [user]);
 
