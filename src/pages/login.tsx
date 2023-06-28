@@ -36,8 +36,8 @@ const Login: NextPageWithLayout = ({}) => {
 			<div className="flex items-center mt-4">
 				<button
 					className="!h-[52px] flex-1 text-[#FFF] bg-[#000] rounded-sm"
-          onClick={handleLoginUser}
-        >
+					onClick={handleLoginUser}
+				>
 					Log in with Google
 				</button>
 			</div>

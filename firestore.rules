@@ -15,7 +15,7 @@ service cloud.firestore {
     }
     
     // User data rules
-    match /users/{userID} {
+    match /privkeys/{userID} {
       function encPrivkeyPkcs8IsValid(encPrivkey) {
         // TODO: implement. For now, just check that it's not null
         return encPrivkey != null;
@@ -27,7 +27,7 @@ service cloud.firestore {
       }
 
       // Ensure that the user document is allowed
-      function userIsValid() {
+      function privkeyIsValid() {
         return userIsOwner(userID) &&
         fingerprintIsValid(request.resource.data["pubkey_fingerprint"]) &&
         encPrivkeyPkcs8IsValid(request.resource.data["enc_privkey_pkcs8"]) &&
@@ -35,7 +35,7 @@ service cloud.firestore {
       }
       
       allow read: if userIsOwner(userID);
-      allow write: if userIsValid();
+      allow write: if privkeyIsValid();
     }
 
     // Bucket rules

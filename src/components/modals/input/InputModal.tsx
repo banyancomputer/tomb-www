@@ -34,7 +34,7 @@ const ChangeModal: React.FC<IInputModal> = ({
 	inputPlaceholder,
 	onClose,
 	onClickCancel,
-	onClickSave
+	onClickSave,
 }) => {
 	return (
 		<Modal isOpen={isOpen} onClose={onClose}>

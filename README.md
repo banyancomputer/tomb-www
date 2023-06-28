@@ -60,7 +60,7 @@ There is a test user in the Firebase emulator with the following credentials:
 
 ```
 Email: test@test.com
-password: iamatest
+Passkey: test-key
 ```
 
 You can use this user to login to the app and test the functionality.

@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }: any) => {
 	const [error, setError] = useState<string>('');
 
 	/* Effects */
-	
+
 	// Update the user state when the auth state changes
 	useEffect(() => {
 		const unsubscribe = Auth.onAuthStateChanged(async (firebaseUser) => {
