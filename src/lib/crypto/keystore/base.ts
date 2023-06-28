@@ -39,29 +39,27 @@ export default class KeyStoreBase {
     return checkIsKeyPair(maybeKey)
   }
 
-  async fingerprintPublicKey(): Promise<string> {
+  async fingerprintPublicKey(
+
+  ): Promise<string> {
     const keyPair = await this.keyPair()
-    const bytes = await common.exportKeyBytes(keyPair.publicKey as PublicKey, ExportKeyFormat.SPKI)
+    const bytes = await common.exportKeyBytes(keyPair.publicKey as PublicKey, ExportKeyFormat.PKCS8)
     const hash = crypto.createHash('sha1')
     hash.update(Buffer.from(bytes))
     return hash.digest('hex')
   }
 
-
-
   async exportPublicKey(): Promise<string> {
-    const mergedCfg = config.merge(this.cfg)
     const keyPair = await this.keyPair()
     return common.exportKey(
-      keyPair.publicKey as PublicKey, mergedCfg.publicKeyFormat
+      keyPair.publicKey as PublicKey, ExportKeyFormat.PKCS8
     )
   }
 
   async exportPrivateKey(): Promise<string> {
-    const mergedCfg = config.merge(this.cfg)
     const keyPair = await this.keyPair()
     return common.exportKey(
-      keyPair.privateKey as PrivateKey, mergedCfg.privateKeyFormat
+      keyPair.privateKey as PrivateKey, ExportKeyFormat.PKCS8 
     )
   }
 
@@ -86,7 +84,8 @@ export default class KeyStoreBase {
     keyName: string,
     seedphrase: string,
     salt: ArrayBuffer,
-    cfg?: Partial<Config>): Promise<CryptoKey> {
+    cfg?: Partial<Config>
+  ): Promise<CryptoKey> {
     const mergedCfg = config.merge(this.cfg, cfg)
     const key = await aes.deriveKey(
       seedphrase,
@@ -104,10 +103,9 @@ export default class KeyStoreBase {
     await idb.put(keyName, key, this.store)
   }
 
-  async exportSymmKey(keyName: string, cfg?: Partial<Config>): Promise<string> {
-    const mergedCfg = config.merge(this.cfg, cfg)
+  async exportSymmKey(keyName: string): Promise<string> {
     const key = await this.getSymmKey(keyName)
-    return common.exportKey(key, mergedCfg.symmKeyFormat)
+    return common.exportKey(key, ExportKeyFormat.RAW)
   }
 
   async encryptWithSymmKey(msg: string, keyName: string, cfg?: Partial<Config>): Promise<string> {

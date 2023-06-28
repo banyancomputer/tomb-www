@@ -43,10 +43,8 @@ export class TombKeyStore extends KeyStoreBase implements KeyStore {
             publicKey,
             privateKey,
             mergedCfg.asymmAlg,
-            mergedCfg.hashAlg,
-            mergedCfg.publicKeyFormat,
-            mergedCfg.privateKeyFormat,
-        )
+            mergedCfg.hashAlg
+          )
     ), this.store)
   }
 

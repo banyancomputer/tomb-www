@@ -11,14 +11,14 @@ export type Config = {
   type: CryptoSystem
   rsaSize: RsaSize
   asymmAlg: AsymmAlg
-  publicKeyFormat: ExportKeyFormat
-  privateKeyFormat: ExportKeyFormat
+  // publicKeyFormat: ExportKeyFormat
+  // privateKeyFormat: ExportKeyFormat
 
   // Symmetric Configuration
   symmAlg: SymmAlg
   symmLen: SymmKeyLength
   saltLen: number
-  symmKeyFormat: ExportKeyFormat
+  // symmKeyFormat: ExportKeyFormat
 
   // Hash Configuration
   hashAlg: HashAlg
@@ -34,13 +34,12 @@ export type SymmKeyOpts = {
   alg: SymmAlg
   length: SymmKeyLength
   iv: ArrayBuffer
-  format: ExportKeyFormat
+  // format: ExportKeyFormat
 }
 
 // Helper type for exporting keys
 export enum ExportKeyFormat {
   PKCS8 = 'pkcs8',
-  SPKI = 'spki',
   RAW = 'raw',
 }
 

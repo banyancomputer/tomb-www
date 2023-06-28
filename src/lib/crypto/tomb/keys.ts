@@ -27,12 +27,11 @@ export async function importPublicKey(
   base64Key: string,
   alg: AsymmAlg,
   hashAlg: HashAlg,
-  format: ExportKeyFormat
 ): Promise<PublicKey> {
   const uses: KeyUsage[] = ['encrypt']
   const buf = utils.base64ToArrBuf(base64Key)
   return webcrypto.subtle.importKey(
-    format,
+    ExportKeyFormat.PKCS8,
     buf,
     { name: alg, hash: {name: hashAlg}},
     true,
@@ -44,12 +43,11 @@ export async function importPrivateKey(
   base64Key: string,
   alg: AsymmAlg,
   hashAlg: HashAlg,
-  format: ExportKeyFormat
 ): Promise<CryptoKey> {
   const uses: KeyUsage[] = ['decrypt']
   const buf = utils.base64ToArrBuf(base64Key)
   return webcrypto.subtle.importKey(
-    format,
+    ExportKeyFormat.PKCS8,
     buf,
     { name: alg, hash: {name: hashAlg}},
     true,
@@ -61,12 +59,10 @@ export async function importKeyPair(
   publicKey: string,
   privateKey: string,
   alg: AsymmAlg,
-  hashAlg: HashAlg,
-  pubFormat: ExportKeyFormat,
-  privFormat: ExportKeyFormat,
+  hashAlg: HashAlg
 ): Promise<CryptoKeyPair> {
-  const pub = await importPublicKey(publicKey, alg, hashAlg, pubFormat)
-  const priv = await importPrivateKey(privateKey, alg, hashAlg, privFormat)
+  const pub = await importPublicKey(publicKey, alg, hashAlg)
+  const priv = await importPrivateKey(privateKey, alg, hashAlg)
   return { publicKey: pub, privateKey: priv }
 }
 
