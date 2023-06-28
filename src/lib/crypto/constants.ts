@@ -1,9 +1,4 @@
-import { RsaSize, SymmAlg, SymmKeyLength, HashAlg, CharSize, ExportKeyFormat } from './types'
-
-
-// export const DEFAULT_PRIV_KEY_FORMAT = ExportKeyFormat.PKCS8
-// export const DEFAULT_PUB_KEY_FORMAT = ExportKeyFormat.PKCS8
-// export const DEFAULT_SYMM_KEY_FORMAT = ExportKeyFormat.RAW
+import { RsaSize, SymmAlg, SymmKeyLength, HashAlg, CharSize } from './types'
 
 export const DEFAULT_CRYPTOSYSTEM = 'rsa'
 export const DEFAULT_ASYMM_ALG = 'RSA-OAEP'
@@ -24,8 +19,6 @@ export default {
   DEFAULT_CRYPTOSYSTEM,
   DEFAULT_ASYMM_ALG,
   DEFAULT_RSA_SIZE,
-  // DEFAULT_PRIV_KEY_FORMAT,
-  // DEFAULT_PUB_KEY_FORMAT,
   DEFAULT_SYMM_ALG,
   DEFAULT_SYMM_LEN,
   DEFAULT_SALT_LENGTH,
