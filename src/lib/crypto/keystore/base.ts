@@ -39,14 +39,12 @@ export default class KeyStoreBase {
     return checkIsKeyPair(maybeKey)
   }
 
-  async fingerprintPublicKey(
-
-  ): Promise<string> {
+  async fingerprintPublicKey(): Promise<string> {
     const keyPair = await this.keyPair()
     const bytes = await common.exportKeyBytes(keyPair.publicKey as PublicKey, ExportKeyFormat.SPKI)
-    const hash = crypto.createHash('sha1')
+    const hash = crypto.createHash('sha256')
     hash.update(Buffer.from(bytes))
-    return hash.digest('hex')
+    return hash.digest('base64')
   }
 
   async exportPublicKey(): Promise<string> {
