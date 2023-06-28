@@ -40,6 +40,7 @@ export type SymmKeyOpts = {
 // Helper type for exporting keys
 export enum ExportKeyFormat {
   PKCS8 = 'pkcs8',
+  SPKI = 'spki',
   RAW = 'raw',
 }
 

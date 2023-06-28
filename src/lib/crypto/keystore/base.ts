@@ -43,7 +43,7 @@ export default class KeyStoreBase {
 
   ): Promise<string> {
     const keyPair = await this.keyPair()
-    const bytes = await common.exportKeyBytes(keyPair.publicKey as PublicKey, ExportKeyFormat.PKCS8)
+    const bytes = await common.exportKeyBytes(keyPair.publicKey as PublicKey, ExportKeyFormat.SPKI)
     const hash = crypto.createHash('sha1')
     hash.update(Buffer.from(bytes))
     return hash.digest('hex')
@@ -52,7 +52,7 @@ export default class KeyStoreBase {
   async exportPublicKey(): Promise<string> {
     const keyPair = await this.keyPair()
     return common.exportKey(
-      keyPair.publicKey as PublicKey, ExportKeyFormat.PKCS8
+      keyPair.publicKey as PublicKey, ExportKeyFormat.SPKI
     )
   }
 

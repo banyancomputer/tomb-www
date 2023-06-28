@@ -31,7 +31,7 @@ export async function importPublicKey(
   const uses: KeyUsage[] = ['encrypt']
   const buf = utils.base64ToArrBuf(base64Key)
   return webcrypto.subtle.importKey(
-    ExportKeyFormat.PKCS8,
+    ExportKeyFormat.SPKI,
     buf,
     { name: alg, hash: {name: hashAlg}},
     true,
