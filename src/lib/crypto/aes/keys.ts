@@ -3,8 +3,9 @@ import utils from '../utils'
 import {
   DEFAULT_SYMM_ALG,
   DEFAULT_SYMM_LEN,
-  DEFAULT_SYMM_KEY_FORMAT,
+  // DEFAULT_SYMM_KEY_FORMAT,
 } from '../constants'
+import { ExportKeyFormat } from '../types'
 import { SymmKey, SymmKeyOpts, HashAlg } from '../types'
 
 export async function makeKey(opts?: Partial<SymmKeyOpts>): Promise<SymmKey> {
@@ -26,7 +27,7 @@ export async function deriveKey(
 ): Promise<SymmKey> {
   const enc = new TextEncoder()
   let baseKey = await webcrypto.subtle.importKey(
-    opts?.format || DEFAULT_SYMM_KEY_FORMAT,
+    ExportKeyFormat.RAW,
     enc.encode(seed),
     'PBKDF2',
     false,
@@ -53,7 +54,7 @@ export async function deriveKey(
 export async function importKey(base64key: string, opts?: Partial<SymmKeyOpts>): Promise<SymmKey> {
   const buf = utils.base64ToArrBuf(base64key)
   return webcrypto.subtle.importKey(
-    opts?.format || DEFAULT_SYMM_KEY_FORMAT,
+    ExportKeyFormat.RAW,
     buf,
     {
       name: opts?.alg || DEFAULT_SYMM_ALG,

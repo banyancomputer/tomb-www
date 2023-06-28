@@ -9,3 +9,10 @@ export async function exportKey(
     const exp = await webcrypto.subtle.exportKey(format, key)
     return utils.arrBufToBase64(exp)
 }
+
+export async function exportKeyBytes(
+    key: CryptoKey, 
+    format: ExportKeyFormat
+): Promise<ArrayBuffer> {
+    return await webcrypto.subtle.exportKey(format, key)
+}

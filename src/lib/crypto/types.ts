@@ -11,14 +11,11 @@ export type Config = {
   type: CryptoSystem
   rsaSize: RsaSize
   asymmAlg: AsymmAlg
-  publicKeyFormat: ExportKeyFormat
-  privateKeyFormat: ExportKeyFormat
 
   // Symmetric Configuration
   symmAlg: SymmAlg
   symmLen: SymmKeyLength
   saltLen: number
-  symmKeyFormat: ExportKeyFormat
 
   // Hash Configuration
   hashAlg: HashAlg
@@ -34,7 +31,6 @@ export type SymmKeyOpts = {
   alg: SymmAlg
   length: SymmKeyLength
   iv: ArrayBuffer
-  format: ExportKeyFormat
 }
 
 // Helper type for exporting keys
