@@ -65,7 +65,7 @@ export class TombKeyStore extends KeyStoreBase implements KeyStore {
 		const saltBuf = saltStr
 			? utils.base64ToArrBuf(saltStr)
 			: utils.randomSalt(mergedCfg.saltLen);
-		await IDB.createIfDoesNotExist(
+		await IDB.createOrOverwrite(
 			this.cfg.passKeyName,
 			() =>
 				this.deriveSymmKey(

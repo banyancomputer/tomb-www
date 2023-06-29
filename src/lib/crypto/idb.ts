@@ -18,6 +18,15 @@ export async function createIfDoesNotExist(
 	await put(id, key, store);
 }
 
+export async function createOrOverwrite(
+	id: string,
+	makeFn: () => Promise<CryptoKeyPair | CryptoKey>,
+	store: LocalForage = localforage
+): Promise<void> {
+	const key = await makeFn();
+	await put(id, key, store);
+}
+
 /* istanbul ignore next */
 export async function put(
 	id: string,
@@ -86,6 +95,7 @@ export async function clear(store?: LocalForage): Promise<void> {
 export default {
 	createStore,
 	createIfDoesNotExist,
+	createOrOverwrite,
 	put,
 	getKeypair,
 	getKey,

@@ -40,38 +40,38 @@ const Account: NextPageWithLayout = ({}) => {
 	}, [keystoreInitialized]);
 
 	const handleInitializeKeystore = () => {
-		console.log('Initializing keystore with passkey: ' + passkey);
+		console.log('Acccount: Initializing keystore with passkey');
 		if (!user) {
-			console.error('App: User not logged in');
+			console.error('Acccount: User not logged in');
 			setError('User not logged in');
 			return;
 		}
 		initializeKeystore(user, passkey)
 			.then(() => {
-				console.log('App: Keystore initialized with passkey: ' + passkey);
+				console.log('Acccount: Keystore initialized');
 				setError(null);
 				onClose();
 				Router.reload();
 			})
-			.catch((_) =>
-				setError('Invalid passkey. Are you sure you remembered it correctly?')
-			);
+			.catch((error: any) => {
+				setError('Failed to initialize keystore: '+ error.message);
+			});
 	};
 
 	const handlePurgeKeystore = () => {
-		console.log('Purging keystore');
+		console.log('Acccount: Purging keystore');
 		if (!user) {
-			console.error('App: User not logged in');
+			console.error('Acccount: User not logged in');
 			setError('User not logged in');
 			return;
 		}
 		purgeKeystore()
 			.then(() => {
-				console.log('App: Keystore purged');
+				console.log('Acccount: Keystore purged');
 				setError(null);
 				Router.reload();
 			})
-			.catch((_) => setError('Failed to purge keystore'));
+			.catch((_) => setError('Acccount: Failed to purge keystore'));
 	};
 
 	return (
