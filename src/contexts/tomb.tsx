@@ -108,7 +108,7 @@ export const TombProvider = ({ children }: any) => {
 		if (!keystore) {
 			throw new Error('Keystore not initialized');
 		}
-		return await keystore.fingerprintPublicKey(); 
+		return await keystore.fingerprintPublicKey();
 	};
 
 	// Purge the keystore from storage
@@ -174,7 +174,7 @@ export const TombProvider = ({ children }: any) => {
 		privkeyData: PrivKeyData,
 		passphrase: string
 	) => {
-		// Get the keystore by the user's uid 
+		// Get the keystore by the user's uid
 		const ks = await getKeystore(firebaseUser.uid);
 
 		// Check if the user's keystore is already initialized

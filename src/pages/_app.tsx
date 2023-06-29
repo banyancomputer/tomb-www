@@ -5,11 +5,15 @@ import { AuthProvider } from '@/contexts/auth';
 import { TombProvider } from '@/contexts/tomb';
 import { useEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
+import { SessionProvider } from 'next-auth/react';
 
 interface AppPropsWithLayout extends AppProps {
 	Component: NextPageWithLayout;
 }
-export default function App({ Component, pageProps }: AppPropsWithLayout) {
+export default function App({
+	Component,
+	pageProps: { session, ...pageProps },
+}: AppPropsWithLayout) {
 	useEffect(() => {
 		if (typeof window !== 'undefined') {
 			const loader = document.getElementById('globalLoader');
@@ -19,12 +23,12 @@ export default function App({ Component, pageProps }: AppPropsWithLayout) {
 
 	const getLayout = Component.getLayout || ((page) => page);
 	return (
-		<AuthProvider>
-			<TombProvider>
-				<ChakraProvider>
-					{getLayout(<Component {...pageProps} />)}
-				</ChakraProvider>
-			</TombProvider>
-		</AuthProvider>
+		// <AuthProvider>
+		<SessionProvider session={session}>
+			{/* <TombProvider> */}
+			<ChakraProvider>{getLayout(<Component {...pageProps} />)}</ChakraProvider>
+			{/* </TombProvider> */}
+		</SessionProvider>
+		// </AuthProvider>
 	);
 }

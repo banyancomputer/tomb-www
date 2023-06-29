@@ -1,1 +1,21 @@
-{"kind":"identitytoolkit#DownloadAccountResponse","users":[{"localId":"3hCtDR5Tji2T0l1gMmS8X181YeJh","email":"test@test.com","emailVerified":true,"createdAt":"1687986275013","lastLoginAt":"1687986312808","providerUserInfo":[{"providerId":"google.com","rawId":"3927701659657211173199658796099468279086","federatedId":"3927701659657211173199658796099468279086","email":"test@test.com"}],"lastRefreshAt":"2023-06-28T21:05:12.808Z"}]}
+{
+	"kind": "identitytoolkit#DownloadAccountResponse",
+	"users": [
+		{
+			"localId": "3hCtDR5Tji2T0l1gMmS8X181YeJh",
+			"email": "test@test.com",
+			"emailVerified": true,
+			"createdAt": "1687986275013",
+			"lastLoginAt": "1687986312808",
+			"providerUserInfo": [
+				{
+					"providerId": "google.com",
+					"rawId": "3927701659657211173199658796099468279086",
+					"federatedId": "3927701659657211173199658796099468279086",
+					"email": "test@test.com"
+				}
+			],
+			"lastRefreshAt": "2023-06-28T21:05:12.808Z"
+		}
+	]
+}

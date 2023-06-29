@@ -37,6 +37,7 @@
 		"keystore-idb": "^0.15.5",
 		"libphonenumber-js": "^1.10.26",
 		"next": "13.2.4",
+		"next-auth": "^4.22.1",
 		"nookies": "^2.5.2",
 		"one-webcrypto": "^1.0.3",
 		"react": "18.2.0",
