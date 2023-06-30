@@ -5,12 +5,12 @@ import { SiTwitter, SiDiscord } from 'react-icons/si';
 import Link from 'next/link';
 
 const NoUploadScreen = () => {
-  return (
-    <>
-      <div className="h-screen flex justify-center content-center">
-        <div className="text-xl font-medium mt-auto mb-auto">
-          You don&apos;t have any buckets yet.
-          {/* <p className="break-after-colum"></p>
+	return (
+		<>
+			<div className="h-screen flex justify-center content-center">
+				<div className="text-xl font-medium mt-auto mb-auto">
+					You don&apos;t have any buckets yet.
+					{/* <p className="break-after-colum"></p>
           <Link
             href={'https://share.hsforms.com/1mvZF3awnRJC6ywL2aC8-tQe3p87'}
             className="text-[#5299E0] underline underline-offset-4"
@@ -18,7 +18,7 @@ const NoUploadScreen = () => {
             Request
           </Link>{' '}
           your first upload or learn more */}
-          {/* <div className="flex">
+					{/* <div className="flex">
             about
             <Link
               href="https://www.tombolo.store/"
@@ -27,7 +27,7 @@ const NoUploadScreen = () => {
               Tombolo
             </Link>
             {/*@ts-ignore*/}
-            {/* <HStack spacing={2} direction="row">
+					{/* <HStack spacing={2} direction="row">
               <ArrowForwardIcon />
               <Icon
                 className="cursor-pointer"
@@ -48,11 +48,11 @@ const NoUploadScreen = () => {
                 }
               />
             </HStack> */}
-          {/* </div> */}
-        </div>
-      </div>
-    </>
-  );
+					{/* </div> */}
+				</div>
+			</div>
+		</>
+	);
 };
 
 export default NoUploadScreen;

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import { useAuth } from '@/contexts/session';
+import { useAuth } from '@/contexts/auth';
 import React from 'react';
 // import LoadingSpinner from '@/components/utils/spinners/loading/LoadingSpinner';
 // import LoadingScreen from '@/components/utils/screens/LoadingScreen';
@@ -8,21 +8,21 @@ import React from 'react';
 export interface IAuthorizedRoute {}
 // @ts-ignore
 const AuthorizedRoute: React.FC<IAuthorizedRoute> = ({ children }) => {
-  // const { user, userLoading } = useAuth();
-  const { user } = useAuth();
-  // const Router = useRouter();
+	// const { user, userLoading } = useAuth();
+	const { user } = useAuth();
+	// const Router = useRouter();
 
-  if (user) {
-    return <>{children}</>;
-  }
-  //  else if (userLoading) {
-  //   return <LoadingScreen />;
-  // } 
-  else {
-    // Router.push('/login');
-    window.location.href = '/login';
-    // return null;
-  }
+	if (user) {
+		return <>{children}</>;
+	}
+	//  else if (userLoading) {
+	//   return <LoadingScreen />;
+	// }
+	else {
+		// Router.push('/login');
+		window.location.href = '/login';
+		// return null;
+	}
 };
 
 export default AuthorizedRoute;

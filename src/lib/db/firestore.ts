@@ -90,7 +90,7 @@
 //   await deleteDoc(docRef);
 // }
 
-// /* Bucket Utilities */ 
+// /* Bucket Utilities */
 
 // /*
 //  * Create a new bucket for a user
@@ -138,7 +138,7 @@
 //       data: doc.data() as BucketData
 //     })
 //   });
-//   return buckets; 
+//   return buckets;
 // }
 
 // /*

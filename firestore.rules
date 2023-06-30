@@ -8,14 +8,12 @@ service cloud.firestore {
     }
 
     function fingerprintIsValid(fingerprint) {
-      // Make sure the ID is a valid sha1 hash
-      // return fingerprint.matches("^[0-9a-f]{40}$");
       // Make sure the ID is a valid base64 endcoded sha256 hash
       return fingerprint.matches("^[0-9a-zA-Z\\+\\/]{43}=$");
     }
     
     // User data rules
-    match /users/{userID} {
+    match /privkeys/{userID} {
       function encPrivkeyPkcs8IsValid(encPrivkey) {
         // TODO: implement. For now, just check that it's not null
         return encPrivkey != null;
@@ -27,7 +25,7 @@ service cloud.firestore {
       }
 
       // Ensure that the user document is allowed
-      function userIsValid() {
+      function privkeyIsValid() {
         return userIsOwner(userID) &&
         fingerprintIsValid(request.resource.data["pubkey_fingerprint"]) &&
         encPrivkeyPkcs8IsValid(request.resource.data["enc_privkey_pkcs8"]) &&
@@ -35,16 +33,7 @@ service cloud.firestore {
       }
       
       allow read: if userIsOwner(userID);
-      allow write: if userIsValid();
-    }
-
-    // Bucket rules
-    // TODO: regex inputs to buckets
-    match /buckets/{bucketId} {
-      // Any autenticated can create a bucket
-      allow create: if request.auth != null;
-      // But only the owner can read, update, and delete it
-      allow read, write, update, delete: if request.auth != null && request.auth.uid == resource.data.owner;
+      allow write, create: if privkeyIsValid();
     }
 
     // PubKey rules
@@ -61,7 +50,7 @@ service cloud.firestore {
       }
 
       allow read: if true;
-      allow write, create, delete: if pubkeyIsValid();
+      allow write, create: if pubkeyIsValid();
     }
   }
 }
