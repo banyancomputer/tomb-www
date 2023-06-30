@@ -13,8 +13,6 @@ import {
 } from '@chakra-ui/react';
 import AuthorizedRoute from '@/components/utils/routes/Authorized';
 import NoUploadScreen from '@/components/utils/screens/NoUploadScreen';
-import Bucket, { BucketData } from '@/lib/entities/bucket';
-import * as bucketDb from '@/lib/db/bucket';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/contexts/auth';
 import ChangeModal from '@/components/modals/input/InputModal';
@@ -39,12 +37,31 @@ const customStyles = {
 const Dashboard: NextPageWithLayout<IDashboard> = () => {
 	// @ts-ignore
 	const { accessToken, data: session } = useSession();
+	const [data, setData] = useState<string>('');
+
+	useEffect(() => {
+		if (session) {
+			fetch('/api/restricted')
+				.then((res) => {
+					console.log(res);
+					if (res.ok) return res.json();
+					throw new Error('Unauthorized');
+				})
+				.then((data) => {
+					setData(
+						JSON.stringify(data, null, 2)
+					)
+				});
+		}
+	}, [session]);
+
 	if (session) {
 		return (
 			<>
 				Signed in as {session.user?.email} <br />
 				<div>Access Token: {accessToken || ''}</div>
 				<button onClick={() => signOut()}>Sign out</button>
+				<div>{data}</div>
 			</>
 		);
 	}

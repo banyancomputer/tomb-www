@@ -2,6 +2,8 @@ import { getServerSession } from 'next-auth/next';
 import { authOptions } from './auth/[...nextauth]';
 
 export default async (req: any, res: any) => {
+	
+	// @ ts-ignore
 	const session = await getServerSession(req, res, authOptions);
 
 	if (session) {

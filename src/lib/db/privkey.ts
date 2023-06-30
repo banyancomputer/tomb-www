@@ -1,4 +1,4 @@
-import { Firestore } from '@/config/firebase';
+import { Firestore } from '@/config/firebase-web';
 import PrivKey, { PrivKeyData } from '@/lib/entities/privkey';
 import { doc, getDoc, setDoc, collection } from 'firebase/firestore';
 

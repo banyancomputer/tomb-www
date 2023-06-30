@@ -1,4 +1,4 @@
-import { Firestore } from '@/config/firebase';
+import { Firestore } from '@/config/firebase-web';
 import { doc, getDoc, setDoc, collection } from 'firebase/firestore';
 import PubKey, { PubKeyData } from '../entities/pubkey';
 

@@ -1,5 +1,8 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
+import { FirestoreAdapter } from '@auth/firebase-adapter';
+// import { Firestore } fros m '@/config/firebase-admin';
+// import * as allowedDb from '@/lib/admin/db/allowed';
 
 // Allowed emails
 const allowedEmails = [
@@ -8,6 +11,7 @@ const allowedEmails = [
 
 export const authOptions = {
 	debug: process.env.NODE_ENV === 'development',
+	// adapter: FirestoreAdapter(Firestore),
 	// Configure one or more authentication providers
 	providers: [
 		GoogleProvider({
@@ -19,6 +23,8 @@ export const authOptions = {
 		async signIn({ user }) {
 			// TODO: Real is allowed list from DB	
 			const isAllowedToSignIn = allowedEmails.includes(user.email);
+			// const isAllowedToSignIn = await allowedDb.read(user.email);
+
 			if (isAllowedToSignIn) {
 				return true;
 			} else {

@@ -4,7 +4,9 @@ service cloud.firestore {
     // High level rules
     function userIsOwner(owner) {
       // Ensure the User ID matches the Auth UID
-      return owner == request.auth.uid;
+      return owner == request.auth.token.id;
+        // And ensure the user is signed in on a valid session
+        // && exists(/databases/$(database)/documents/_next_auth_firebase_adapter_/store/customToken/$(request.auth.token.sessionToken));
     }
 
     function fingerprintIsValid(fingerprint) {
@@ -52,5 +54,14 @@ service cloud.firestore {
       allow read: if true;
       allow write, create: if pubkeyIsValid();
     }
+
+    // Emails that are allowed to authenticate
+    match /allowed/{email} {
+      function emailIsValid() {
+        return email.matches("^[^@]+@[^@]+$");
+      }
+
+      // This will only be used by the server, so no need to check for auth -- in fact deny everything
+      allow read, write, create: if false;
   }
 }
