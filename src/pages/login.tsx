@@ -1,22 +1,24 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { NextPageWithLayout } from '@/pages/page';
 import PublicLayout from '@/layouts/public/PublicLayout';
-import { useAuth } from '@/contexts/auth';
+// import { useAuth } from '@/contexts/auth';
+import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
 const Login: NextPageWithLayout = ({}) => {
-	const { user, logIn } = useAuth();
+	const { data: session } = useSession();
 	const router = useRouter();
 	const [error, setError] = useState('');
 
 	useEffect(() => {
-		if (user) {
+		if (session) {
 			router.push('/').then(() => window.scrollTo(0, 0));
 		}
-	}, [user]);
+	}, [session]);
 
-	const handleLoginUser = () => {
-		logIn().catch((err) => {
+	const handleLogin = () => {
+		signIn('google')
+		.catch((err) => {
 			setError(err.message);
 		});
 	};
@@ -36,7 +38,7 @@ const Login: NextPageWithLayout = ({}) => {
 			<div className="flex items-center mt-4">
 				<button
 					className="!h-[52px] flex-1 text-[#FFF] bg-[#000] rounded-sm"
-					onClick={handleLoginUser}
+					onClick={handleLogin}
 				>
 					Log in with Google
 				</button>

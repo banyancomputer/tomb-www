@@ -1,10 +1,10 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from './auth/[...nextauth]';
 
-export default async (req: any, res: any) => {
-	
-	// @ ts-ignore
+export default async (req: NextApiRequest, res: NextApiResponse) => {
 	const session = await getServerSession(req, res, authOptions);
+	console.log(session);
 
 	if (session) {
 		res.send({

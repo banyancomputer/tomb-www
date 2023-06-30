@@ -1,5 +1,5 @@
 import { Firestore } from '@/config/firebase-web';
-import PrivKey, { PrivKeyData } from '@/lib/entities/privkey';
+import PrivKey, { PrivKeyData } from '@/interfaces/privkey';
 import { doc, getDoc, setDoc, collection } from 'firebase/firestore';
 
 const privkeys_collection = collection(Firestore, 'privkeys');

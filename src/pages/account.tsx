@@ -1,18 +1,36 @@
 import { NextPageWithLayout } from '@/pages/page';
 import AuthedLayout from '@/layouts/authed/AuthedLayout';
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/auth';
 import AccountInfoCard from '@/components/cards/account/AccountInfoCard';
 import { useRouter } from 'next/router';
-import { useTomb } from '@/contexts/tomb';
-import InputModal from '@/components/modals/input/InputModal';
-import { Button, useDisclosure } from '@chakra-ui/react';
-import KeyCard from '@/components/cards/key/KeyCard';
+// import { useTomb } from '@/contexts/tomb';
+// import InputModal from '@/components/modals/input/InputModal';
+// import { Button, useDisclosure } from '@chakra-ui/react';
+// import KeyCard from '@/components/cards/key/KeyCard';
 import Router from 'next/router';
+import { getServerSession } from 'next-auth';
+import { authOptions } from './api/auth/[...nextauth]';
+import { useSession } from 'next-auth/react';
+
+export async function getServerSideProps(context: any) {
+	const session = await getServerSession(context.req, context.res, authOptions);
+	if (!session) {
+		return {
+			redirect: {
+				destination: '/login',
+				permanent: false,
+			},
+		};
+	}
+	return {
+		props: {} as IAccount,
+	};
+}
+
+export interface IAccount {}
 
 const Account: NextPageWithLayout = ({}) => {
-	return <></>;
-	// const { user } = useAuth();
+	const { data: session } = useSession();
 	// const {
 	// 	isRegistered,
 	// 	initializeKeystore,
@@ -20,17 +38,11 @@ const Account: NextPageWithLayout = ({}) => {
 	// 	getFingerprint,
 	// 	purgeKeystore,
 	// } = useTomb();
-	// const router = useRouter();
+	const router = useRouter();
 	// const { isOpen, onOpen, onClose } = useDisclosure();
 	// const [passkey, setPasskey] = useState<string>('');
 	// const [fingerprint, setFingerprint] = useState<string>('');
-	// const [error, setError] = useState<string | null>(null);
-
-	// useEffect(() => {
-	// 	if (!user) {
-	// 		router.push('/login');
-	// 	}
-	// }, [user]);
+	const [error, setError] = useState<string | null>(null);
 
 	// useEffect(() => {
 	// 	if (keystoreInitialized) {
@@ -75,57 +87,57 @@ const Account: NextPageWithLayout = ({}) => {
 	// 		.catch((_) => setError('Acccount: Failed to purge keystore'));
 	// };
 
-	// return (
-	// 	<>
-	// 		<div className="flex flex-col gap-2 p-6">
-	// 			<h1 className="text-xl">Profile</h1>
-	// 			<div className="flex flex-col">
-	// 				<AccountInfoCard uid={user?.uid || ''} />
+	return (
+		<>
+			<div className="flex flex-col gap-2 p-6">
+				<h1 className="text-xl">Profile</h1>
+				<div className="flex flex-col">
+					<AccountInfoCard uid={session?.user?.email || ''} />
 
-	// 				{keystoreInitialized ? (
-	// 					<>
-	// 						<KeyCard id={fingerprint || ''} />
-	// 						<Button
-	// 							colorScheme="red"
-	// 							variant="solid"
-	// 							ml={4}
-	// 							w={40}
-	// 							onClick={handlePurgeKeystore}
-	// 						>
-	// 							Purge Keystore
-	// 						</Button>
-	// 					</>
-	// 				) : (
-	// 					<Button
-	// 						colorScheme="blue"
-	// 						variant="solid"
-	// 						ml={4}
-	// 						w={40}
-	// 						onClick={onOpen}
-	// 					>
-	// 						Initialize Keystore
-	// 						<InputModal
-	// 							isOpen={isOpen}
-	// 							title="Enter your passkey"
-	// 							error={error || ''}
-	// 							description={
-	// 								isRegistered
-	// 									? 'Enter your passkey to recover your key pair'
-	// 									: "Derive a new key pair from a passkey -- don't forget it!"
-	// 							}
-	// 							onClose={onClose}
-	// 							onClickCancel={onClose}
-	// 							onClickSave={handleInitializeKeystore}
-	// 							onInputChange={(e: any) => setPasskey(e.target.value)}
-	// 							inputId="passkey"
-	// 							inputPlaceholder="Passkey"
-	// 						/>
-	// 					</Button>
-	// 				)}
-	// 			</div>
-	// 		</div>
-	// 	</>
-	// );
+					{/* {keystoreInitialized ? (
+						<>
+							<KeyCard id={fingerprint || ''} />
+							<Button
+								colorScheme="red"
+								variant="solid"
+								ml={4}
+								w={40}
+								onClick={handlePurgeKeystore}
+							>
+								Purge Keystore
+							</Button>
+						</>
+					) : (
+						<Button
+							colorScheme="blue"
+							variant="solid"
+							ml={4}
+							w={40}
+							onClick={onOpen}
+						>
+							Initialize Keystore
+							<InputModal
+								isOpen={isOpen}
+								title="Enter your passkey"
+								error={error || ''}
+								description={
+									isRegistered
+										? 'Enter your passkey to recover your key pair'
+										: "Derive a new key pair from a passkey -- don't forget it!"
+								}
+								onClose={onClose}
+								onClickCancel={onClose}
+								onClickSave={handleInitializeKeystore}
+								onInputChange={(e: any) => setPasskey(e.target.value)}
+								inputId="passkey"
+								inputPlaceholder="Passkey"
+							/>
+						</Button>
+					)} */}
+				</div>
+			</div>
+		</>
+	);
 };
 
 export default Account;

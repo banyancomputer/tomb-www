@@ -1,7 +1,6 @@
 import '@/styles/globals.css';
 import type { AppProps } from 'next/app';
 import { NextPageWithLayout } from '@/pages/page';
-import { AuthProvider } from '@/contexts/auth';
 import { TombProvider } from '@/contexts/tomb';
 import { useEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
@@ -23,12 +22,10 @@ export default function App({
 
 	const getLayout = Component.getLayout || ((page) => page);
 	return (
-		// <AuthProvider>
 		<SessionProvider session={session}>
 			{/* <TombProvider> */}
 			<ChakraProvider>{getLayout(<Component {...pageProps} />)}</ChakraProvider>
 			{/* </TombProvider> */}
 		</SessionProvider>
-		// </AuthProvider>
 	);
 }
