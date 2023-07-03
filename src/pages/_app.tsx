@@ -24,7 +24,9 @@ export default function App({
 	return (
 		<SessionProvider session={session}>
 			<TombProvider>
-				<ChakraProvider>{getLayout(<Component {...pageProps} />)}</ChakraProvider>
+				<ChakraProvider>
+					{getLayout(<Component {...pageProps} />)}
+				</ChakraProvider>
 			</TombProvider>
 		</SessionProvider>
 	);

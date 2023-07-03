@@ -65,7 +65,7 @@ const Account: NextPageWithLayout = ({}) => {
 				Router.reload();
 			})
 			.catch((error: any) => {
-				setError('Failed to initialize keystore: '+ error.message);
+				setError('Failed to initialize keystore: ' + error.message);
 			});
 	};
 

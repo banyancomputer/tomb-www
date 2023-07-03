@@ -5,9 +5,7 @@ import { FirestoreAdapter } from '@auth/firebase-adapter';
 // import * as allowedDb from '@/lib/admin/db/allowed';
 
 // Allowed emails
-const allowedEmails = [
-	'alex@banyan.computer', 
-];
+const allowedEmails = ['alex@banyan.computer'];
 
 export const authOptions = {
 	debug: process.env.NODE_ENV === 'development',
@@ -21,15 +19,13 @@ export const authOptions = {
 	],
 	callbacks: {
 		// Set new data in the token from the jwt callback
-		async jwt({ token, account, profile }) {
+		async jwt({ token, account }) {
 			// console.log(
 			// 	'JWT callback: ',
 			// 	'\nToken -> ',
 			// 	token,
 			// 	'\nAccount -> ',
-			// 	account,
-			// 	'\nProfile -> ',
-			// 	profile
+			// 	account
 			// );
 			if (account) {
 				token.accessToken = account.access_token;

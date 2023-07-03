@@ -16,14 +16,14 @@ const KEY_PAIR_NAME = 'key-pair';
 const PASS_KEY_NAME = 'pass-key';
 
 export const TombContext = createContext<{
-    // External State
+	// External State
 
 	// Whether the user has an encrypted private key in the db
 	isRegistered: boolean;
 	// Whether the user's keystore has been initialized
 	keystoreInitialized: boolean;
 
-    // External Methods
+	// External Methods
 
 	// Initialize a keystore based on the user's passphrase
 	initializeKeystore: (session: Session, passkey: string) => Promise<void>;
@@ -40,18 +40,18 @@ export const TombContext = createContext<{
 });
 
 export const TombProvider = ({ children }: any) => {
-    /* State */
+	/* State */
 
-    // Inherited State
+	// Inherited State
 	const { data: session } = useSession();
 
-    // External State
+	// External State
 	const [isRegistered, setIsRegistered] = useState<boolean>(false);
 	const [keystoreInitialized, setKeystoreInitialized] =
 		useState<boolean>(false);
 
-    // Internal State
-    const [keystore, setKeystore] = useState<TombKeyStore | null>(null);
+	// Internal State
+	const [keystore, setKeystore] = useState<TombKeyStore | null>(null);
 	const [privkeyData, setPrivkeyData] = useState<PrivKeyData | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
@@ -85,9 +85,9 @@ export const TombProvider = ({ children }: any) => {
 	useEffect(() => {
 		const check = async (session: Session) => {
 			const { data } = await privkeyDb.read(session.id).catch((err) => {
-                // console.error(err);
-                return { data: null };
-            });
+				// console.error(err);
+				return { data: null };
+			});
 			if (data) {
 				setIsRegistered(true);
 				setPrivkeyData(data);
@@ -105,12 +105,12 @@ export const TombProvider = ({ children }: any) => {
 		session: Session,
 		passkey: string
 	): Promise<void> => {
-        console.log('Initializing keystore');
+		console.log('Initializing keystore');
 		if (privkeyData && !keystoreInitialized) {
-            console.log('Initializing keystore with privkey data');
+			console.log('Initializing keystore with privkey data');
 			await initKeystore(session, privkeyData, passkey);
 		} else {
-            console.log('Registering user');
+			console.log('Registering user');
 			await registerUser(session, passkey);
 		}
 	};
@@ -172,7 +172,7 @@ export const TombProvider = ({ children }: any) => {
 		const pubkey_data: PubKeyData = { spki, owner };
 		const pubkey_fingerprint: string = await ks.fingerprintPublicKey();
 
-        console.log('Registering user with fingerprint: ' + pubkey_fingerprint);
+		console.log('Registering user with fingerprint: ' + pubkey_fingerprint);
 		await pubkeyDb.create(pubkey_fingerprint, pubkey_data);
 		// Create the user in the db with a reference to the pubkey and the encrypted private key
 		const privkey_data: PrivKeyData = {

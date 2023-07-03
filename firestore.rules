@@ -59,6 +59,6 @@ service cloud.firestore {
     match /allowed/{email} {
       // This will only be used by the server, so no need to check for auth -- in fact deny everything
       allow read, write, create: if false;
+    }
   }
-}
 }
