@@ -57,11 +57,8 @@ service cloud.firestore {
 
     // Emails that are allowed to authenticate
     match /allowed/{email} {
-      function emailIsValid() {
-        return email.matches("^[^@]+@[^@]+$");
-      }
-
       // This will only be used by the server, so no need to check for auth -- in fact deny everything
       allow read, write, create: if false;
   }
+}
 }

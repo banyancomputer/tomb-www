@@ -1,5 +1,7 @@
 import { Firestore } from '@/config/firebase-admin';
 
+// Admin API for managing allowed users
+
 const allowed_collection = Firestore.collection('allowed');
 
 /* Allowed User CRUD */

@@ -5,7 +5,9 @@ import { FirestoreAdapter } from '@auth/firebase-adapter';
 // import * as allowedDb from '@/lib/admin/db/allowed';
 
 // Allowed emails
-const allowedEmails = ['alex@banyan.computer'];
+const allowedEmails = [
+	'alex@banyan.computer', 
+];
 
 export const authOptions = {
 	debug: process.env.NODE_ENV === 'development',
@@ -20,10 +22,15 @@ export const authOptions = {
 	callbacks: {
 		// Set new data in the token from the jwt callback
 		async jwt({ token, account, profile }) {
-			console.log("JWT callback: ", 
-						"\nToken -> ", token,
-						"\nAccount -> ", account,
-						"\nProfile -> ", profile);
+			// console.log(
+			// 	'JWT callback: ',
+			// 	'\nToken -> ',
+			// 	token,
+			// 	'\nAccount -> ',
+			// 	account,
+			// 	'\nProfile -> ',
+			// 	profile
+			// );
 			if (account) {
 				token.accessToken = account.access_token;
 				token.provider = account.provider;
@@ -34,12 +41,12 @@ export const authOptions = {
 		},
 
 		// Set new data in the session from the user object, using token modified in jwt callback
-		async session({ session, token  }) {
+		async session({ session, token }) {
 			session.accessToken = token.accessToken;
 			session.id = token.id;
 			session.provider = token.provider;
 
-			console.log("New Session: ", session);
+			// console.log('New Session: ', session);
 			return session;
 		},
 
@@ -48,9 +55,13 @@ export const authOptions = {
 			if (account.provider !== 'google') {
 				return false;
 			}
-			console.log("Sign in callback: ",
-						"\nAccount -> ", account,
-						"\nProfile -> ", profile);
+			// console.log(
+			// 	'Sign in callback: ',
+			// 	'\nAccount -> ',
+			// 	account,
+			// 	'\nProfile -> ',
+			// 	profile
+			// );
 
 			// TODO: Real is allowed list from DB
 			const isAllowedToSignIn = allowedEmails.includes(profile.email);

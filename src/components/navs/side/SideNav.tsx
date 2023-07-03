@@ -33,7 +33,7 @@ const SideNav: React.FC<ISideNav> = ({ children }) => {
 		{
 			label: 'Log Out',
 			callback: async () => {
-				await signOut();	
+				await signOut();
 				window.location.href = window.location.origin;
 			},
 			icon: Disconnect,

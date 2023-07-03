@@ -16,7 +16,7 @@ export async function getServerSideProps(context: any) {
 		};
 	}
 	return {
-		props: {} as IDashboard
+		props: {} as IDashboard,
 	};
 }
 
@@ -40,17 +40,17 @@ const Dashboard: NextPageWithLayout<IDashboard> = () => {
 		}
 	}, [session]);
 
-		return (
-			<>
-				Signed in as {session?.user?.name} <br />
-				Your email address is {session?.user?.email} <br />
-				{/* @ts-ignore */}
-				<div>Access Token: {session?.accessToken || ''}</div>
-				<div>User Id: {session?.id}</div>
-				<div>Provider: {session?.provider}</div>
-				<div>{content}</div>
-			</>
-		);
+	return (
+		<>
+			Signed in as {session?.user?.name} <br />
+			Your email address is {session?.user?.email} <br />
+			{/* @ts-ignore */}
+			<div>Access Token: {session?.accessToken || ''}</div>
+			<div>User Id: {session?.id}</div>
+			<div>Provider: {session?.provider}</div>
+			<div>{content}</div>
+		</>
+	);
 };
 
 export default Dashboard;

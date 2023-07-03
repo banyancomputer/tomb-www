@@ -1,6 +1,7 @@
 import { Firestore } from '@/config/firebase-admin';
 import PrivKey, { PrivKeyData } from '@/interfaces/privkey';
 
+// Admin API for managing private keys
 
 const privkeys_collection = Firestore.collection('privkeys');
 
@@ -21,9 +22,9 @@ export const create = async (
 
 export const read = async (id: string): Promise<PrivKey> => {
 	const docRef = privkeys_collection.doc(id);
-    const snapshot = await docRef.get();
-    return {
-        id,
-        data: snapshot.data() as PrivKeyData,
-    } as PrivKey;
+	const snapshot = await docRef.get();
+	return {
+		id,
+		data: snapshot.data() as PrivKeyData,
+	} as PrivKey;
 };

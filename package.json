@@ -16,7 +16,9 @@
 		"dev": "cross-env NODE_OPTIONS='--inspect' NODE_ENV='development' next dev",
 		"firebase": "firebase emulators:start --import state --project default",
 		"firebase:save": "firebase emulators:start --import state --export-on-exit state --project default",
-		"prod": "cross-env NODE_ENV='production' next start"
+		"prod": "cross-env NODE_ENV='production' next start",
+		"test:e2e:open": "cypress open",
+		"test:e2e:run": "cypress run"
 	},
 	"dependencies": {
 		"@auth/firebase-adapter": "^1.0.0",
@@ -52,12 +54,14 @@
 		"validator": "^13.9.0"
 	},
 	"devDependencies": {
+		"@testing-library/cypress": "^9.0.0",
 		"@types/validator": "^13.7.14",
 		"@typescript-eslint/eslint-plugin": "^5.57.0",
 		"autoprefixer": "^10.4.14",
 		"babel-eslint": "^10.1.0",
 		"cross-env": "^7.0.3",
-		"cypress": "^12.10.0",
+		"cypress": "^12.16.0",
+		"cypress-social-logins": "^1.14.1",
 		"env-cmd": "^10.1.0",
 		"postcss": "^8.4.21",
 		"prettier": "^2.8.6",

@@ -16,8 +16,7 @@ const Login: NextPageWithLayout = ({}) => {
 	}, [session]);
 
 	const handleLoginWithProvider = (provider: any) => () => {
-		signIn(provider)
-		.catch((err) => {
+		signIn(provider).catch((err) => {
 			setError(err.message);
 		});
 	};

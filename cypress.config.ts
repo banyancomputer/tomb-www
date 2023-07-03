@@ -1,10 +1,12 @@
-// import { defineConfig } from "cypress";
+import { defineConfig } from 'cypress';
 
-// export default defineConfig({
-//   e2e: {
-//     baseUrl: 'http://localhost:3000/',
+// TODO: Implement testing with NextAuth and Google Login
 
-//   },
-//   viewportWidth: 1280,
-//   viewportHeight: 720,
-// });
+export default defineConfig({
+	e2e: {
+		baseUrl: 'http://localhost:3000/',
+		chromeWebSecurity: false,
+	},
+	viewportWidth: 1280,
+	viewportHeight: 720,
+});
