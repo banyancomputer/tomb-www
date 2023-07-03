@@ -7,7 +7,7 @@ const privkeys_collection = collection(Firestore, 'privkeys');
 /* User CRUD */
 
 export const create = async (
-	// The user's firebase uid
+	// The user's email 
 	id: string,
 	data: PrivKeyData
 ): Promise<PrivKey> => {

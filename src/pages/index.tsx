@@ -1,7 +1,7 @@
 import { NextPageWithLayout } from '@/pages/page';
 import AuthedLayout from '@/layouts/authed/AuthedLayout';
 import { useEffect, useState } from 'react';
-import { useSession, signIn, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
 import { getServerSession } from 'next-auth';
 import { authOptions } from './api/auth/[...nextauth]';
 
@@ -46,6 +46,8 @@ const Dashboard: NextPageWithLayout<IDashboard> = () => {
 				Your email address is {session?.user?.email} <br />
 				{/* @ts-ignore */}
 				<div>Access Token: {session?.accessToken || ''}</div>
+				<div>User Id: {session?.id}</div>
+				<div>Provider: {session?.provider}</div>
 				<div>{content}</div>
 			</>
 		);

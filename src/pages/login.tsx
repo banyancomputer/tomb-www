@@ -1,7 +1,6 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NextPageWithLayout } from '@/pages/page';
 import PublicLayout from '@/layouts/public/PublicLayout';
-// import { useAuth } from '@/contexts/auth';
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 
@@ -16,8 +15,8 @@ const Login: NextPageWithLayout = ({}) => {
 		}
 	}, [session]);
 
-	const handleLogin = () => {
-		signIn('google')
+	const handleLoginWithProvider = (provider: any) => () => {
+		signIn(provider)
 		.catch((err) => {
 			setError(err.message);
 		});
@@ -38,7 +37,7 @@ const Login: NextPageWithLayout = ({}) => {
 			<div className="flex items-center mt-4">
 				<button
 					className="!h-[52px] flex-1 text-[#FFF] bg-[#000] rounded-sm"
-					onClick={handleLogin}
+					onClick={handleLoginWithProvider('google')}
 				>
 					Log in with Google
 				</button>

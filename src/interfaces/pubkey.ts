@@ -2,12 +2,13 @@
 export interface PubKeyData {
 	// The SPKI of the user's exported public key, base64 encoded
 	spki: string;
-	// The uid of the user who owns the key
+	// The id of the user
 	owner: string;
 }
 
 export default interface PubKey {
 	// The sha1 fingerprint of the user's exported public key, hex string
 	id: string;
+	// The user's public key data
 	data: PubKeyData;
 }

@@ -18,27 +18,40 @@ export const authOptions = {
 		}),
 	],
 	callbacks: {
-		// Example of reading properties from the account service into the session
-
 		// Set new data in the token from the jwt callback
-		async jwt({ token, account }) {
+		async jwt({ token, account, profile }) {
+			console.log("JWT callback: ", 
+						"\nToken -> ", token,
+						"\nAccount -> ", account,
+						"\nProfile -> ", profile);
 			if (account) {
-				token.accessToken = account.access_token;	
+				token.accessToken = account.access_token;
+				token.provider = account.provider;
+				// Question: Does this work for all providers?
+				token.id = account.providerAccountId;
 			}
 			return token;
 		},
 
 		// Set new data in the session from the user object, using token modified in jwt callback
-		async session({ session, token }) {
+		async session({ session, token  }) {
 			session.accessToken = token.accessToken;
-			console.log("Returning session: ", session);
+			session.id = token.id;
+			session.provider = token.provider;
+
+			console.log("New Session: ", session);
 			return session;
 		},
 
 		async signIn({ account, profile }) {
+			// Prevent sign in if the account is not allowed
 			if (account.provider !== 'google') {
 				return false;
 			}
+			console.log("Sign in callback: ",
+						"\nAccount -> ", account,
+						"\nProfile -> ", profile);
+
 			// TODO: Real is allowed list from DB
 			const isAllowedToSignIn = allowedEmails.includes(profile.email);
 			// const isAllowedToSignIn = await allowedDb.read(user.email);
