@@ -3,8 +3,6 @@
 **/.env.dev
 **/.env.local
 
-cypress.env.json
-
 # IntelliJ
 .idea
 

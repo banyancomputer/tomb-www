@@ -11,8 +11,6 @@ services:
       - '3000:3000'
     environment:
       NODE_ENV: development,
-    environment:
-      - NODE_ENV=development
-      - NEXTAUTH_INTERNAL_URL=http://web:3000
+      NEXTAUTH_INTERNAL_URL: http://web:3000
     env_file:
       - .env.dev
