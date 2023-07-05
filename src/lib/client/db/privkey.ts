@@ -8,9 +8,7 @@ import PrivKey, { PrivKeyData } from '@/interfaces/privkey';
  * Create a new PrivKey document via the API
  * @param data The private keys data
  */
-export const create = async (
-	data: PrivKeyData
-): Promise<PrivKey> => {
+export const create = async (data: PrivKeyData): Promise<PrivKey> => {
 	const res = await fetch('/api/keys/private', {
 		method: 'POST',
 		headers: {
@@ -33,5 +31,5 @@ export const read = async (): Promise<PrivKey> => {
 			'Content-Type': 'application/json',
 		},
 	});
-	return res.json();	
+	return res.json();
 };

@@ -28,7 +28,7 @@ export const authOptions = {
 			// 	'\nAccount -> ',
 			// 	account
 			// );
-			
+
 			if (account) {
 				token.accessToken = account.access_token;
 				token.provider = account.provider;
@@ -58,11 +58,10 @@ export const authOptions = {
 			// 	profile
 			// );
 
-			return await allowedDb.read(profile.email)
-				.catch((error) => {
-					console.error('Error reading allowed list: ', error);
-					return false;
-				})
+			return await allowedDb.read(profile.email).catch((error) => {
+				console.error('Error reading allowed list: ', error);
+				return false;
+			});
 		},
 	},
 };

@@ -33,4 +33,4 @@ export const readAll = async (owner: string): Promise<PubKey[]> => {
 			data: doc.data() as PubKeyData,
 		} as PubKey;
 	});
-}
+};

@@ -18,6 +18,7 @@ npm install
 ```
 
 ### Environment and Services
+
 There is a `env.example` file in the root of the project. Copy this file to `.env.dev` and fill in the values. See below for more information on each variable.
 
 #### **Next Auth Setup**
@@ -32,10 +33,10 @@ NEXTAUTH_SECRET=<some_random_string>
 For development the default values should be fine, but you can change them if you'd like.
 
 #### **Google Project Setup**
+
 This project relies on Firestore for database storage and Google OAuth2.0 for authentication. You'll need to setup the following:
 
- 
-*Firebase Setup*
+_Firebase Setup_
 
 To set this up, you'll need to create a Firebase project and setup the following services:
 
@@ -61,7 +62,7 @@ FIREBASE_CLIENT_EMAIL=<client_email>
 FIREBASE_PRIVATE_KEY=<private_key>
 ```
 
-*Google Auth Setup*
+_Google Auth Setup_
 
 You'll need to create a Google OAuth Client ID and Secret. You can do this by following the instructions [here](https://next-auth.js.org/providers/google).
 
@@ -72,13 +73,9 @@ GOOGLE_CLIENT_ID=<client_id>
 GOOGLE_CLIENT_SECRET=<client_secret>
 ```
 
-
 ### Running with Docker
 
-Note: There is an issue with using Docker and NextAuth that needs to be resolved. See [here](
-  https://github.com/nextauthjs/next-auth/issues/3202
-) for more information.
-
+Note: There is an issue with using Docker and NextAuth that needs to be resolved. See [here](https://github.com/nextauthjs/next-auth/issues/3202) for more information.
 
 Build a development docker image:
 
@@ -122,4 +119,3 @@ npm run firebase
 The Firebase emulators UI will be available at http://localhost:4000.
 
 Note: The firebase emualtores might need to be installed on your machine.
-
