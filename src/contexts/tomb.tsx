@@ -1,8 +1,8 @@
 import { createContext, useState, useEffect, useContext } from 'react';
 import { PrivKeyData } from '@/interfaces/privkey';
 import { PubKeyData } from '@/interfaces/pubkey';
-import * as privkeyDb from '@/lib/db/privkey';
-import * as pubkeyDb from '@/lib/db/pubkey';
+import * as privkeyDb from '@/lib/client/db/privkey';
+import * as pubkeyDb from '@/lib/client/db/pubkey';
 import TombKeyStore from '@/lib/crypto/tomb/keystore';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
@@ -65,7 +65,7 @@ export const TombProvider = ({ children }: any) => {
 	// Attempt to initialize the keystore when the session changes
 	useEffect(() => {
 		const init = async (session: Session) => {
-			const ks = await getKeystore(session.user?.email ?? '');
+			const ks = await getKeystore(session.id);
 			if (
 				(await ks.keyExists(PASS_KEY_NAME)) &&
 				(await ks.keyPairExists(KEY_PAIR_NAME))
@@ -82,8 +82,9 @@ export const TombProvider = ({ children }: any) => {
 	// Set the isRegistered state if the user has an encrypted private key in the db
 	useEffect(() => {
 		const check = async (session: Session) => {
-			const { data } = await privkeyDb.read(session.user?.email ?? '').catch((err) => {
-				// console.error(err);
+			const { data } = await privkeyDb.read().catch((err) => {
+				setError('Failed to read privkey data: ' + err.message);
+				console.error(err);
 				return { data: null };
 			});
 			if (data) {
@@ -154,7 +155,7 @@ export const TombProvider = ({ children }: any) => {
 		passphrase: string
 	): Promise<void> => {
 		// Get the uid of the new user
-		const owner: string = session.user?.email ?? '';
+		const owner: string = session.id;
 		// Get the keystore for the user from the browser
 		const ks = await getKeystore(owner);
 		// Generate a new keypair for the user
@@ -178,7 +179,7 @@ export const TombProvider = ({ children }: any) => {
 			enc_privkey_pkcs8,
 			passkey_salt,
 		};
-		await privkeyDb.create(owner, privkey_data);
+		await privkeyDb.create(privkey_data);
 	};
 
 	const initKeystore = async (
@@ -187,7 +188,7 @@ export const TombProvider = ({ children }: any) => {
 		passphrase: string
 	) => {
 		// Get the keystore by the user's uid
-		const ks = await getKeystore(session.user?.email ?? '');
+		const ks = await getKeystore(session.id);
 
 		// Check if the user's keystore is already initialized
 		if (

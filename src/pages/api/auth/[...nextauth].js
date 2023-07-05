@@ -1,11 +1,8 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { FirestoreAdapter } from '@auth/firebase-adapter';
-import { Firestore } from '@/config/firebase-admin';
-import * as allowedDb from '@/lib/admin/db/allowed';
-
-// Allowed emails
-const allowedEmails = ['alex@banyan.computer'];
+import { Firestore } from '@/config/firebase-server';
+import * as allowedDb from '@/lib/server/db/allowed';
 
 export const authOptions = {
 	debug: process.env.NODE_ENV === 'development',
@@ -31,6 +28,7 @@ export const authOptions = {
 			// 	'\nAccount -> ',
 			// 	account
 			// );
+			
 			if (account) {
 				token.accessToken = account.access_token;
 				token.provider = account.provider;
@@ -44,8 +42,6 @@ export const authOptions = {
 			session.accessToken = token.accessToken;
 			session.id = token.id;
 			session.provider = token.provider;
-
-			// console.log('New Session: ', session);
 			return session;
 		},
 

@@ -1,4 +1,4 @@
-import { Firestore } from '@/config/firebase-admin';
+import { Firestore } from '@/config/firebase-server';
 
 // Admin API for managing allowed users
 

@@ -1,65 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // High level rules
-    function userIsOwner(owner) {
-      // Ensure the User ID matches the Auth UID
-      return true; // owner == request.auth.token.id;
-        // And ensure the user is signed in on a valid session
-        // && exists(/databases/$(database)/documents/_next_auth_firebase_adapter_/store/customToken/$(request.auth.token.sessionToken));
-    }
-
-    function fingerprintIsValid(fingerprint) {
-      // Make sure the ID is a valid hex endcoded sha256 hash
-      // return fingerprint.matches("^[0-9a-zA-Z\\+\\/]{43}=$");
-      return fingerprint.matches("^[0-9a-f]{64}$");
-    }
-    
-    // User data rules
-    match /privkeys/{userID} {
-      function encPrivkeyPkcs8IsValid(encPrivkey) {
-        // TODO: implement. For now, just check that it's not null
-        return encPrivkey != null;
-      }
-
-      function passkeySaltIsValid(salt) {
-        // TODO: implement. For now, just check that it's not null
-        return salt != null;
-      }
-
-      // Ensure that the user document is allowed
-      function privkeyIsValid() {
-        return userIsOwner(userID) &&
-        fingerprintIsValid(request.resource.data["pubkey_fingerprint"]) &&
-        encPrivkeyPkcs8IsValid(request.resource.data["enc_privkey_pkcs8"]) &&
-        passkeySaltIsValid(request.resource.data["passkey_salt"]);
-      }
-      
-      allow read: if userIsOwner(userID);
-      allow write, create: if privkeyIsValid();
-    }
-
-    // PubKey rules
-    match /pubkeys/{pubkey_fingerprint}  {
-      function pubkeyIsSpki(pubkey) {
-        // TODO: Implement. For now, just check that it's not null
-        return pubkey != null;
-      }
-
-      function pubkeyIsValid() {
-        return userIsOwner(request.resource.data["owner"]) &&
-        fingerprintIsValid(pubkey_fingerprint) &&
-        pubkeyIsSpki(request.resource.data["spki"]);
-      }
-
-      allow read: if true;
-      allow write, create: if pubkeyIsValid();
-    }
-
-    // Emails that are allowed to authenticate
-    match /allowed/{email} {
-      // This will only be used by the server, so no need to check for auth -- in fact deny everything
-      allow read, write, create: if false;
+    // All validation is done server-side
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

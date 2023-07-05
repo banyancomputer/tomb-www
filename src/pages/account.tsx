@@ -73,7 +73,7 @@ const Account: NextPageWithLayout = ({}) => {
 			<div className="flex flex-col gap-2 p-6">
 				<h1 className="text-xl">Profile</h1>
 				<div className="flex flex-col">
-					<AccountInfoCard uid={session?.user?.email || ''} />
+					<AccountInfoCard uid={session?.id || ''} />
 
 					{keystoreInitialized ? (
 						<>

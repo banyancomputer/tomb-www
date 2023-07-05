@@ -1,4 +1,4 @@
-import { Firestore } from '@/config/firebase-admin';
+import { Firestore } from '@/config/firebase-server';
 import PubKey, { PubKeyData } from '@/interfaces/pubkey';
 
 // Admin API for managing public keys
@@ -24,3 +24,13 @@ export const read = async (id: string): Promise<PubKey> => {
 		data: snapshot.data() as PubKeyData,
 	} as PubKey;
 };
+
+export const readAll = async (owner: string): Promise<PubKey[]> => {
+	const snapshot = await pubkeys_collection.where('owner', '==', owner).get();
+	return snapshot.docs.map((doc) => {
+		return {
+			id: doc.id,
+			data: doc.data() as PubKeyData,
+		} as PubKey;
+	});
+}

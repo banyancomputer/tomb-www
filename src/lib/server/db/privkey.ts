@@ -1,4 +1,4 @@
-import { Firestore } from '@/config/firebase-admin';
+import { Firestore } from '@/config/firebase-server';
 import PrivKey, { PrivKeyData } from '@/interfaces/privkey';
 
 // Admin API for managing private keys
