@@ -77,7 +77,7 @@ GOOGLE_CLIENT_SECRET=<client_secret>
 
 Note: There is an issue with using Docker and NextAuth that needs to be resolved. See [here](https://github.com/nextauthjs/next-auth/issues/3202) for more information.
 
-Build a development docker image:
+<!-- Build a development docker image:
 
 ```bash
 docker-compose build
@@ -89,7 +89,7 @@ Run a development docker container:
 docker-compose up
 ```
 
-If you have a properly configured `.env.dev` file, the frontend will be available at http://localhost:3000.
+If you have a properly configured `.env.dev` file, the frontend will be available at http://localhost:3000. -->
 
 ### Running Dev Server Locally
 
