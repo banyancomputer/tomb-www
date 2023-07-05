@@ -10,8 +10,6 @@ import { CloseIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
 import { signOut } from 'next-auth/react';
 
-// TOOD
-
 const navItemsUpper = [
 	{
 		label: 'Dashboard',

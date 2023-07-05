@@ -2,23 +2,6 @@ import { NextPageWithLayout } from '@/pages/page';
 import AuthedLayout from '@/layouts/authed/AuthedLayout';
 import { useEffect, useState } from 'react';
 import { useSession } from 'next-auth/react';
-import { getServerSession } from 'next-auth';
-import { authOptions } from './api/auth/[...nextauth]';
-
-export async function getServerSideProps(context: any) {
-	const session = await getServerSession(context.req, context.res, authOptions);
-	if (!session) {
-		return {
-			redirect: {
-				destination: '/login',
-				permanent: false,
-			},
-		};
-	}
-	return {
-		props: {} as IDashboard,
-	};
-}
 
 export interface IDashboard {}
 
@@ -44,7 +27,6 @@ const Dashboard: NextPageWithLayout<IDashboard> = () => {
 		<>
 			Signed in as {session?.user?.name} <br />
 			Your email address is {session?.user?.email} <br />
-			{/* @ts-ignore */}
 			<div>Access Token: {session?.accessToken || ''}</div>
 			<div>User Id: {session?.id}</div>
 			<div>Provider: {session?.provider}</div>

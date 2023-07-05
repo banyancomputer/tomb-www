@@ -1,15 +1,16 @@
 {
-	"apiKey": "AIzaSyC4qWAoxtp2_BvMymhtgITB2UPcSVfPc3s",
-
-	"authDomain": "blucket-dev.firebaseapp.com",
-
-	"projectId": "blucket-dev",
-
-	"storageBucket": "blucket-dev.appspot.com",
-
-	"messagingSenderId": "1023761469479",
-
-	"appId": "1:1023761469479:web:a5e426b90de96165c93e02",
-
-	"measurementId": "G-ZFZSXCMT92"
+	"apiKey": "AIzaSyBIkU7rv6PCq9clIM6Q9Hkw4s2-h8eo2vs",
+  
+	"authDomain": "banyan-dev-a3b42.firebaseapp.com",
+  
+	"projectId": "banyan-dev-a3b42",
+  
+	"storageBucket": "banyan-dev-a3b42.appspot.com",
+  
+	"messagingSenderId": "973442560217",
+  
+	"appId": "1:973442560217:web:9cd9ea6e76843874558ec8",
+  
+	"measurementId": "G-3S4KC3QBPT"
 }
+  

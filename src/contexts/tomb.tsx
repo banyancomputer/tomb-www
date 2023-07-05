@@ -1,5 +1,4 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { User as FirebaseUser } from 'firebase/auth';
 import { PrivKeyData } from '@/interfaces/privkey';
 import { PubKeyData } from '@/interfaces/pubkey';
 import * as privkeyDb from '@/lib/db/privkey';
@@ -9,7 +8,6 @@ import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 
 // TODO: Add in Tomb client from alex/eng-39-tomb-wasm-bindings branch
-// TODO: Reincorporate changes to fingerprinting in fingerprint branch
 
 const KEY_STORE_NAME_PREFIX = 'key-store';
 const KEY_PAIR_NAME = 'key-pair';
@@ -67,7 +65,7 @@ export const TombProvider = ({ children }: any) => {
 	// Attempt to initialize the keystore when the session changes
 	useEffect(() => {
 		const init = async (session: Session) => {
-			const ks = await getKeystore(session.id);
+			const ks = await getKeystore(session.user?.email ?? '');
 			if (
 				(await ks.keyExists(PASS_KEY_NAME)) &&
 				(await ks.keyPairExists(KEY_PAIR_NAME))
@@ -84,7 +82,7 @@ export const TombProvider = ({ children }: any) => {
 	// Set the isRegistered state if the user has an encrypted private key in the db
 	useEffect(() => {
 		const check = async (session: Session) => {
-			const { data } = await privkeyDb.read(session.id).catch((err) => {
+			const { data } = await privkeyDb.read(session.user?.email ?? '').catch((err) => {
 				// console.error(err);
 				return { data: null };
 			});
@@ -156,7 +154,7 @@ export const TombProvider = ({ children }: any) => {
 		passphrase: string
 	): Promise<void> => {
 		// Get the uid of the new user
-		const owner: string = session.id;
+		const owner: string = session.user?.email ?? '';
 		// Get the keystore for the user from the browser
 		const ks = await getKeystore(owner);
 		// Generate a new keypair for the user
@@ -189,7 +187,7 @@ export const TombProvider = ({ children }: any) => {
 		passphrase: string
 	) => {
 		// Get the keystore by the user's uid
-		const ks = await getKeystore(session.id);
+		const ks = await getKeystore(session.user?.email ?? '');
 
 		// Check if the user's keystore is already initialized
 		if (

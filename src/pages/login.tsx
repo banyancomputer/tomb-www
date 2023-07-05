@@ -2,23 +2,27 @@ import { useEffect, useState } from 'react';
 import { NextPageWithLayout } from '@/pages/page';
 import PublicLayout from '@/layouts/public/PublicLayout';
 import { signIn, useSession } from 'next-auth/react';
-import { useRouter } from 'next/router';
+import Router from 'next/router';
 
 const Login: NextPageWithLayout = ({}) => {
-	const { data: session } = useSession();
-	const router = useRouter();
+	const { status } = useSession();
 	const [error, setError] = useState('');
 
+	// Redirect to home page if user is logged in
 	useEffect(() => {
-		if (session) {
-			router.push('/').then(() => window.scrollTo(0, 0));
+		if (status) {
+			Router.push('/').then(() => window.scrollTo(0, 0));
 		}
-	}, [session]);
+	}, [status]);
 
 	const handleLoginWithProvider = (provider: any) => () => {
-		signIn(provider).catch((err) => {
-			setError(err.message);
-		});
+		signIn(provider)
+			.then(() => {
+				Router.push('/').then(() => window.scrollTo(0, 0));
+			})	
+			.catch((err) => {
+				setError(err.message);
+			});
 	};
 
 	return (

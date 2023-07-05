@@ -6,25 +6,8 @@ import { useTomb } from '@/contexts/tomb';
 import InputModal from '@/components/modals/input/InputModal';
 import { Button, useDisclosure } from '@chakra-ui/react';
 import KeyCard from '@/components/cards/key/KeyCard';
-import { getServerSession } from 'next-auth';
-import { authOptions } from './api/auth/[...nextauth]';
 import { useSession } from 'next-auth/react';
 import Router from 'next/router';
-
-export async function getServerSideProps(context: any) {
-	const session = await getServerSession(context.req, context.res, authOptions);
-	if (!session) {
-		return {
-			redirect: {
-				destination: '/login',
-				permanent: false,
-			},
-		};
-	}
-	return {
-		props: {} as IAccount,
-	};
-}
 
 export interface IAccount {}
 
@@ -90,7 +73,7 @@ const Account: NextPageWithLayout = ({}) => {
 			<div className="flex flex-col gap-2 p-6">
 				<h1 className="text-xl">Profile</h1>
 				<div className="flex flex-col">
-					<AccountInfoCard uid={session?.id || ''} />
+					<AccountInfoCard uid={session?.user?.email || ''} />
 
 					{keystoreInitialized ? (
 						<>

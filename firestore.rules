@@ -4,14 +4,15 @@ service cloud.firestore {
     // High level rules
     function userIsOwner(owner) {
       // Ensure the User ID matches the Auth UID
-      return owner == request.auth.token.id;
+      return true; // owner == request.auth.token.id;
         // And ensure the user is signed in on a valid session
         // && exists(/databases/$(database)/documents/_next_auth_firebase_adapter_/store/customToken/$(request.auth.token.sessionToken));
     }
 
     function fingerprintIsValid(fingerprint) {
-      // Make sure the ID is a valid base64 endcoded sha256 hash
-      return fingerprint.matches("^[0-9a-zA-Z\\+\\/]{43}=$");
+      // Make sure the ID is a valid hex endcoded sha256 hash
+      // return fingerprint.matches("^[0-9a-zA-Z\\+\\/]{43}=$");
+      return fingerprint.matches("^[0-9a-f]{64}$");
     }
     
     // User data rules
@@ -46,9 +47,9 @@ service cloud.firestore {
       }
 
       function pubkeyIsValid() {
-        return fingerprintIsValid(pubkey_fingerprint) &&
-        pubkeyIsSpki(request.resource.data["spki"]) &&
-        userIsOwner(request.resource.data["owner"]);
+        return userIsOwner(request.resource.data["owner"]) &&
+        fingerprintIsValid(pubkey_fingerprint) &&
+        pubkeyIsSpki(request.resource.data["spki"]);
       }
 
       allow read: if true;

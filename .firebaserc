@@ -1,6 +1,5 @@
 {
   "projects": {
-    "default": "blucket-dev",
-    "prod": "blucket-prod"
+    "default": "banyan-dev-a3b42"
   }
 }
