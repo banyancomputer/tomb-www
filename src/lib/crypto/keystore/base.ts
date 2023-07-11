@@ -51,7 +51,7 @@ export default class KeyStoreBase {
 		);
 		const hash = crypto.createHash('sha256');
 		hash.update(Buffer.from(bytes));
-		return hash.digest('base64');
+		return hash.digest('hex');
 	}
 
 	async exportPublicKey(): Promise<string> {

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Link from 'next/link';
 import AlphaTag from '../../../images/tags/AlphaTag';
 import BrandLogo from '@/images/icons/BrandLogo';
 import BrandWordmark from '@/images/icons/BrandWordmark';
@@ -9,9 +8,7 @@ import Account from '@/images/icons/Account';
 import Disconnect from '@/images/icons/Disconnect';
 import { CloseIcon } from '@chakra-ui/icons';
 import { IconButton } from '@chakra-ui/react';
-import { useAuth } from '@/contexts/auth';
-
-// TOOD
+import { signOut } from 'next-auth/react';
 
 const navItemsUpper = [
 	{
@@ -29,13 +26,12 @@ const navItemsUpper = [
 export interface ISideNav {}
 // @ts-ignore
 const SideNav: React.FC<ISideNav> = ({ children }) => {
-	const { logOut } = useAuth();
 	const [checked, setChecked] = useState(false);
 	const navItemsLower = [
 		{
 			label: 'Log Out',
 			callback: async () => {
-				await logOut();
+				await signOut();
 				window.location.href = window.location.origin;
 			},
 			icon: Disconnect,

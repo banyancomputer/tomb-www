@@ -1,51 +1,55 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { User as FirebaseUser } from 'firebase/auth';
-import { PrivKeyData } from '@/lib/entities/privkey';
-import { PubKeyData } from '@/lib/entities/pubkey';
-import * as privkeyDb from '@/lib/db/privkey';
-import * as pubkeyDb from '@/lib/db/pubkey';
+import { PrivKeyData } from '@/interfaces/privkey';
+import { PubKeyData } from '@/interfaces/pubkey';
+import * as privkeyDb from '@/lib/client/db/privkey';
+import * as pubkeyDb from '@/lib/client/db/pubkey';
 import TombKeyStore from '@/lib/crypto/tomb/keystore';
-import { useAuth } from '@/contexts/auth';
+import { useSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 // TODO: Add in Tomb client from alex/eng-39-tomb-wasm-bindings branch
-// TODO: Reincorporate changes to fingerprinting in fingerprint branch
 
 const KEY_STORE_NAME_PREFIX = 'key-store';
 const KEY_PAIR_NAME = 'key-pair';
 const PASS_KEY_NAME = 'pass-key';
 
 export const TombContext = createContext<{
-	// A RSA keypair and passkey for the user
-	keystore: TombKeyStore | null;
-	// A Tomb client for the user
-	// client: any | null;
+	// External State
+
 	// Whether the user has an encrypted private key in the db
 	isRegistered: boolean;
 	// Whether the user's keystore has been initialized
 	keystoreInitialized: boolean;
 
+	// External Methods
+
 	// Initialize a keystore based on the user's passphrase
-	initializeKeystore: (user: FirebaseUser, passkey: string) => Promise<void>;
+	initializeKeystore: (session: Session, passkey: string) => Promise<void>;
 	// Purge the keystore from storage
 	purgeKeystore: () => Promise<void>;
 	// Get the public key's fingerprint
 	getFingerprint: () => Promise<string>;
 }>({
-	keystore: null,
-	// client: null,
 	isRegistered: false,
 	keystoreInitialized: false,
-	initializeKeystore: async (user: FirebaseUser, passkey: string) => {},
+	initializeKeystore: async (session: Session, passkey: string) => {},
 	purgeKeystore: async () => {},
 	getFingerprint: async () => '',
 });
 
 export const TombProvider = ({ children }: any) => {
-	const { user } = useAuth();
-	const [keystore, setKeystore] = useState<TombKeyStore | null>(null);
+	/* State */
+
+	// Inherited State
+	const { data: session } = useSession();
+
+	// External State
 	const [isRegistered, setIsRegistered] = useState<boolean>(false);
 	const [keystoreInitialized, setKeystoreInitialized] =
 		useState<boolean>(false);
+
+	// Internal State
+	const [keystore, setKeystore] = useState<TombKeyStore | null>(null);
 	const [privkeyData, setPrivkeyData] = useState<PrivKeyData | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
@@ -58,10 +62,10 @@ export const TombProvider = ({ children }: any) => {
 		}
 	}, [error]);
 
-	// Attempt to initialize the keystore when the user is logged in
+	// Attempt to initialize the keystore when the session changes
 	useEffect(() => {
-		const init = async (user: FirebaseUser) => {
-			const ks = await getKeystore(user.uid);
+		const init = async (session: Session) => {
+			const ks = await getKeystore(session.id);
 			if (
 				(await ks.keyExists(PASS_KEY_NAME)) &&
 				(await ks.keyPairExists(KEY_PAIR_NAME))
@@ -70,36 +74,43 @@ export const TombProvider = ({ children }: any) => {
 				setKeystoreInitialized(true);
 			}
 		};
-		if (user) {
-			init(user);
+		if (session) {
+			init(session);
 		}
-	}, [user]);
+	}, [session]);
 
-	// Set the isRegistered state when the keystore is initialized
+	// Set the isRegistered state if the user has an encrypted private key in the db
 	useEffect(() => {
-		const check = async (user: FirebaseUser) => {
-			const { data } = await privkeyDb.read(user.uid);
+		const check = async (session: Session) => {
+			const { data } = await privkeyDb.read().catch((err) => {
+				setError('Failed to read privkey data: ' + err.message);
+				console.error(err);
+				return { data: null };
+			});
 			if (data) {
 				setIsRegistered(true);
 				setPrivkeyData(data);
 			}
 		};
-		if (user) {
-			check(user);
+		if (session) {
+			check(session);
 		}
-	}, [user]);
+	}, [session]);
 
 	/* Methods */
 
 	// Initialize a keystore based on the user's passphrase
 	const initializeKeystore = async (
-		user: FirebaseUser,
+		session: Session,
 		passkey: string
 	): Promise<void> => {
+		console.log('Initializing keystore');
 		if (privkeyData && !keystoreInitialized) {
-			await initKeystore(user, privkeyData, passkey);
+			console.log('Initializing keystore with privkey data');
+			await initKeystore(session, privkeyData, passkey);
 		} else {
-			await registerUser(user, passkey);
+			console.log('Registering user');
+			await registerUser(session, passkey);
 		}
 	};
 
@@ -108,7 +119,7 @@ export const TombProvider = ({ children }: any) => {
 		if (!keystore) {
 			throw new Error('Keystore not initialized');
 		}
-		return await keystore.fingerprintPublicKey(); 
+		return await keystore.fingerprintPublicKey();
 	};
 
 	// Purge the keystore from storage
@@ -140,11 +151,11 @@ export const TombProvider = ({ children }: any) => {
 
 	// Register a new user in firestore
 	const registerUser = async (
-		firebaseUser: FirebaseUser,
+		session: Session,
 		passphrase: string
 	): Promise<void> => {
 		// Get the uid of the new user
-		const owner: string = firebaseUser.uid;
+		const owner: string = session.id;
 		// Get the keystore for the user from the browser
 		const ks = await getKeystore(owner);
 		// Generate a new keypair for the user
@@ -159,6 +170,8 @@ export const TombProvider = ({ children }: any) => {
 		// Assoicate the public key in the db with the user
 		const pubkey_data: PubKeyData = { spki, owner };
 		const pubkey_fingerprint: string = await ks.fingerprintPublicKey();
+
+		console.log('Registering user with fingerprint: ' + pubkey_fingerprint);
 		await pubkeyDb.create(pubkey_fingerprint, pubkey_data);
 		// Create the user in the db with a reference to the pubkey and the encrypted private key
 		const privkey_data: PrivKeyData = {
@@ -166,16 +179,16 @@ export const TombProvider = ({ children }: any) => {
 			enc_privkey_pkcs8,
 			passkey_salt,
 		};
-		await privkeyDb.create(owner, privkey_data);
+		await privkeyDb.create(privkey_data);
 	};
 
 	const initKeystore = async (
-		firebaseUser: FirebaseUser,
+		session: Session,
 		privkeyData: PrivKeyData,
 		passphrase: string
 	) => {
-		// Get the keystore by the user's uid 
-		const ks = await getKeystore(firebaseUser.uid);
+		// Get the keystore by the user's uid
+		const ks = await getKeystore(session.id);
 
 		// Check if the user's keystore is already initialized
 		if (
@@ -208,7 +221,6 @@ export const TombProvider = ({ children }: any) => {
 	return (
 		<TombContext.Provider
 			value={{
-				keystore,
 				isRegistered,
 				keystoreInitialized,
 				initializeKeystore,

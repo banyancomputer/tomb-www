@@ -1,17 +1,18 @@
 import { NextPageWithLayout } from '@/pages/page';
 import AuthedLayout from '@/layouts/authed/AuthedLayout';
 import { useEffect, useState } from 'react';
-import { useAuth } from '@/contexts/auth';
 import AccountInfoCard from '@/components/cards/account/AccountInfoCard';
-import { useRouter } from 'next/router';
 import { useTomb } from '@/contexts/tomb';
 import InputModal from '@/components/modals/input/InputModal';
 import { Button, useDisclosure } from '@chakra-ui/react';
 import KeyCard from '@/components/cards/key/KeyCard';
+import { useSession } from 'next-auth/react';
 import Router from 'next/router';
 
+export interface IAccount {}
+
 const Account: NextPageWithLayout = ({}) => {
-	const { user } = useAuth();
+	const { data: session } = useSession();
 	const {
 		isRegistered,
 		initializeKeystore,
@@ -19,17 +20,10 @@ const Account: NextPageWithLayout = ({}) => {
 		getFingerprint,
 		purgeKeystore,
 	} = useTomb();
-	const router = useRouter();
 	const { isOpen, onOpen, onClose } = useDisclosure();
 	const [passkey, setPasskey] = useState<string>('');
 	const [fingerprint, setFingerprint] = useState<string>('');
 	const [error, setError] = useState<string | null>(null);
-
-	useEffect(() => {
-		if (!user) {
-			router.push('/login');
-		}
-	}, [user]);
 
 	useEffect(() => {
 		if (keystoreInitialized) {
@@ -41,12 +35,12 @@ const Account: NextPageWithLayout = ({}) => {
 
 	const handleInitializeKeystore = () => {
 		console.log('Acccount: Initializing keystore with passkey');
-		if (!user) {
+		if (!session) {
 			console.error('Acccount: User not logged in');
 			setError('User not logged in');
 			return;
 		}
-		initializeKeystore(user, passkey)
+		initializeKeystore(session, passkey)
 			.then(() => {
 				console.log('Acccount: Keystore initialized');
 				setError(null);
@@ -54,13 +48,13 @@ const Account: NextPageWithLayout = ({}) => {
 				Router.reload();
 			})
 			.catch((error: any) => {
-				setError('Failed to initialize keystore: '+ error.message);
+				setError('Failed to initialize keystore: ' + error.message);
 			});
 	};
 
 	const handlePurgeKeystore = () => {
 		console.log('Acccount: Purging keystore');
-		if (!user) {
+		if (!session) {
 			console.error('Acccount: User not logged in');
 			setError('User not logged in');
 			return;
@@ -79,7 +73,7 @@ const Account: NextPageWithLayout = ({}) => {
 			<div className="flex flex-col gap-2 p-6">
 				<h1 className="text-xl">Profile</h1>
 				<div className="flex flex-col">
-					<AccountInfoCard uid={user?.uid || ''} />
+					<AccountInfoCard uid={session?.id || ''} />
 
 					{keystoreInitialized ? (
 						<>

@@ -1,24 +1,28 @@
-import { FormEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { NextPageWithLayout } from '@/pages/page';
 import PublicLayout from '@/layouts/public/PublicLayout';
-import { useAuth } from '@/contexts/auth';
-import { useRouter } from 'next/router';
+import { signIn, useSession } from 'next-auth/react';
+import Router from 'next/router';
 
 const Login: NextPageWithLayout = ({}) => {
-	const { user, logIn } = useAuth();
-	const router = useRouter();
+	const { status } = useSession();
 	const [error, setError] = useState('');
 
+	// Redirect to home page if user is logged in
 	useEffect(() => {
-		if (user) {
-			router.push('/').then(() => window.scrollTo(0, 0));
+		if (status) {
+			Router.push('/').then(() => window.scrollTo(0, 0));
 		}
-	}, [user]);
+	}, [status]);
 
-	const handleLoginUser = () => {
-		logIn().catch((err) => {
-			setError(err.message);
-		});
+	const handleLoginWithProvider = (provider: any) => () => {
+		signIn(provider)
+			.then(() => {
+				Router.push('/').then(() => window.scrollTo(0, 0));
+			})
+			.catch((err) => {
+				setError(err.message);
+			});
 	};
 
 	return (
@@ -36,7 +40,7 @@ const Login: NextPageWithLayout = ({}) => {
 			<div className="flex items-center mt-4">
 				<button
 					className="!h-[52px] flex-1 text-[#FFF] bg-[#000] rounded-sm"
-					onClick={handleLoginUser}
+					onClick={handleLoginWithProvider('google')}
 				>
 					Log in with Google
 				</button>
