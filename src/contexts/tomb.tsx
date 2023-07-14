@@ -3,15 +3,18 @@ import { PrivKeyData } from '@/interfaces/privkey';
 import { PubKeyData } from '@/interfaces/pubkey';
 import * as privkeyDb from '@/lib/client/db/privkey';
 import * as pubkeyDb from '@/lib/client/db/pubkey';
-import TombKeyStore from '@/lib/crypto/tomb/keystore';
+import ECCKeystore from 'banyan-webcrypto/ecc/keystore';
+import { clear as clearIdb } from 'banyan-webcrypto/idb';
+import { DEFAULT_SALT_LENGTH } from 'banyan-webcrypto/constants';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 
 // TODO: Add in Tomb client from alex/eng-39-tomb-wasm-bindings branch
 
 const KEY_STORE_NAME_PREFIX = 'key-store';
-const KEY_PAIR_NAME = 'key-pair';
-const PASS_KEY_NAME = 'pass-key';
+const EXCHANGE_KEY_PAIR_NAME = 'exchange-key-pair';
+const WRITE_KEY_PAIR_NAME = 'write-key-pair';
+const ESCROW_KEY_NAME = 'escrow-key';
 
 export const TombContext = createContext<{
 	// External State
@@ -49,7 +52,7 @@ export const TombProvider = ({ children }: any) => {
 		useState<boolean>(false);
 
 	// Internal State
-	const [keystore, setKeystore] = useState<TombKeyStore | null>(null);
+	const [keystore, setKeystore] = useState<ECCKeystore | null>(null);
 	const [privkeyData, setPrivkeyData] = useState<PrivKeyData | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
@@ -67,8 +70,9 @@ export const TombProvider = ({ children }: any) => {
 		const init = async (session: Session) => {
 			const ks = await getKeystore(session.id);
 			if (
-				(await ks.keyExists(PASS_KEY_NAME)) &&
-				(await ks.keyPairExists(KEY_PAIR_NAME))
+				(await ks.keyExists(ESCROW_KEY_NAME)) &&
+				(await ks.keyPairExists(EXCHANGE_KEY_PAIR_NAME)) &&
+				(await ks.keyPairExists(WRITE_KEY_PAIR_NAME))
 			) {
 				setKeystore(ks);
 				setKeystoreInitialized(true);
@@ -105,8 +109,9 @@ export const TombProvider = ({ children }: any) => {
 		passkey: string
 	): Promise<void> => {
 		console.log('Initializing keystore');
+		console.log('using salt length: ' + DEFAULT_SALT_LENGTH);
 		if (privkeyData && !keystoreInitialized) {
-			console.log('Initializing keystore with privkey data');
+			console.log('Initializing keystore with recovered privkey data');
 			await initKeystore(session, privkeyData, passkey);
 		} else {
 			console.log('Registering user');
@@ -114,12 +119,12 @@ export const TombProvider = ({ children }: any) => {
 		}
 	};
 
-	// Get the public key's fingerprint
+	// Get the ecdsa public key's fingerprint
 	const getFingerprint = async (): Promise<string> => {
 		if (!keystore) {
 			throw new Error('Keystore not initialized');
 		}
-		return await keystore.fingerprintPublicKey();
+		return await keystore.fingerprintPublicWriteKey();
 	};
 
 	// Purge the keystore from storage
@@ -127,7 +132,8 @@ export const TombProvider = ({ children }: any) => {
 		if (!keystore) {
 			throw new Error('Keystore not initialized');
 		}
-		await keystore.clear();
+		await keystore.destroy();
+		await clearIdb();
 		setKeystore(null);
 		setIsRegistered(false);
 		setKeystoreInitialized(false);
@@ -138,13 +144,11 @@ export const TombProvider = ({ children }: any) => {
 	// Initialize a keystore pointed by the user's uid
 	const getKeystore = async (uid: string) => {
 		const storeName = KEY_STORE_NAME_PREFIX + '-' + uid;
-		const keyPairName = KEY_PAIR_NAME;
-		const passKeyName = PASS_KEY_NAME;
 		if (keystore) {
 			return keystore;
 		}
 		// Defaults are fine here
-		const ks = await TombKeyStore.init({ storeName, keyPairName, passKeyName });
+		const ks = await ECCKeystore.init({ storeName });
 		setKeystore(ks);
 		return ks;
 	};
@@ -158,25 +162,29 @@ export const TombProvider = ({ children }: any) => {
 		const owner: string = session.id;
 		// Get the keystore for the user from the browser
 		const ks = await getKeystore(owner);
-		// Generate a new keypair for the user
-		await ks.genKeyPair();
+		// Generate a new keypairs for the user
+		await ks.genExchangeKeyPair();
+		await ks.genWriteKeyPair();
 		// Derive a new passkey for the user -- this generates a random salt
-		const passkey_salt: string = await ks.derivePassKey(passphrase);
-		const spki: string = await ks.exportPublicKey();
-		const privkey_pkcs8: string = await ks.exportPrivateKey();
-		const enc_privkey_pkcs8: string = await ks.encryptWithPassKey(
-			privkey_pkcs8
-		);
-		// Assoicate the public key in the db with the user
-		const pubkey_data: PubKeyData = { spki, owner };
-		const pubkey_fingerprint: string = await ks.fingerprintPublicKey();
+		const passkey_salt: string = await ks.deriveEscrowKey(passphrase);
+		const wrapped_ecdh_key_pair = await ks.exportEscrowedExchangeKeyPair();
+		const wrapped_ecdsa_key_pair = await ks.exportEscrowedWriteKeyPair();
 
-		console.log('Registering user with fingerprint: ' + pubkey_fingerprint);
-		await pubkeyDb.create(pubkey_fingerprint, pubkey_data);
+		// Assoicate the public key in the db with the user
+		const pubkey_data: PubKeyData = { 
+			ecdh_spki: wrapped_ecdh_key_pair.publicKeyStr,
+			ecdsa_spki: wrapped_ecdsa_key_pair.publicKeyStr,
+			owner
+		};
+
+		const ecdsa_pubkey_fingerprint = await ks.fingerprintPublicWriteKey(); 
+
+		await pubkeyDb.create(ecdsa_pubkey_fingerprint, pubkey_data);
 		// Create the user in the db with a reference to the pubkey and the encrypted private key
 		const privkey_data: PrivKeyData = {
-			pubkey_fingerprint,
-			enc_privkey_pkcs8,
+			ecdsa_pubkey_fingerprint,
+			wrapped_ecdsa_privkey_pkcs8: wrapped_ecdsa_key_pair.wrappedPrivateKeyStr,
+			wrapped_ecdh_privkey_pkcs8: wrapped_ecdh_key_pair.wrappedPrivateKeyStr,
 			passkey_salt,
 		};
 		await privkeyDb.create(privkey_data);
@@ -192,30 +200,51 @@ export const TombProvider = ({ children }: any) => {
 
 		// Check if the user's keystore is already initialized
 		if (
-			(await ks.keyExists(PASS_KEY_NAME)) &&
-			(await ks.keyPairExists(KEY_PAIR_NAME))
+			(await ks.keyExists(ESCROW_KEY_NAME)) &&
+			(await ks.keyPairExists(EXCHANGE_KEY_PAIR_NAME)) &&
+			(await ks.keyPairExists(WRITE_KEY_PAIR_NAME))
 		) {
 			return;
 		}
 
 		// Read the user's encrypted private key and salt and derive the passkey
-		const { pubkey_fingerprint, enc_privkey_pkcs8, passkey_salt } = privkeyData;
-		await ks.derivePassKey(passphrase, passkey_salt);
+		const { ecdsa_pubkey_fingerprint, wrapped_ecdsa_privkey_pkcs8, wrapped_ecdh_privkey_pkcs8, passkey_salt } = privkeyData;
 
-		// Read the user's public key, decrypt the priv key import the keypair into the keystore
-		const pubkey = await pubkeyDb.read(pubkey_fingerprint);
-		const pubkey_spki = pubkey.data.spki;
-		const privkey_pkcs8 = await ks.decryptWithPassKey(enc_privkey_pkcs8);
-		await ks.importKeyPair(pubkey_spki, privkey_pkcs8);
+		console.log(privkeyData);
+		await ks.deriveEscrowKey(passphrase, passkey_salt);
+		const pubkey = await pubkeyDb.read(ecdsa_pubkey_fingerprint);
+		const { ecdsa_spki, ecdh_spki } = pubkey.data;
+
+		// Import the keypair into the keystore
+		await ks.importEscrowedWriteKeyPair(
+			{
+				publicKeyStr: ecdsa_spki,
+				wrappedPrivateKeyStr: wrapped_ecdsa_privkey_pkcs8,
+			}
+		)
+		await ks.importEscrowedExchangeKeyPair(
+			{
+				publicKeyStr: ecdh_spki,
+				wrappedPrivateKeyStr: wrapped_ecdh_privkey_pkcs8,
+			}
+		)
 
 		// Check that the keystore is valid
 		const msg = 'hello world';
-		const ciphertext = await ks.encrypt(msg);
-		const plaintext = await ks.decrypt(ciphertext);
+		
+		const ciphertext = await ks.encrypt(msg, ecdh_spki, passkey_salt);
+		const plaintext = await ks.decrypt(ciphertext, ecdh_spki, passkey_salt);
 		if (plaintext !== msg) {
-			setError('Keystore is invalid');
-			throw new Error('Keystore is invalid');
+			setError('Keystore is invalid: ' + plaintext + ' != ' + msg);
+			throw new Error('Keystore is invalid: ' + plaintext + ' != ' + msg);
 		}
+		const signature = await ks.sign(msg);
+		const verified = await ks.verify(msg, signature, ecdsa_spki);
+		if (!verified) {
+			setError('Keystore is invalid (signature)');
+			throw new Error('Keystore is invalid (signature)');
+		}
+		console.log('Keystore is valid');
 	};
 
 	return (
