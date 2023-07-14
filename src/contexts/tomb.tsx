@@ -3,9 +3,8 @@ import { PrivKeyData } from '@/interfaces/privkey';
 import { PubKeyData } from '@/interfaces/pubkey';
 import * as privkeyDb from '@/lib/client/db/privkey';
 import * as pubkeyDb from '@/lib/client/db/pubkey';
-import ECCKeystore from 'banyan-webcrypto/ecc/keystore';
-import { clear as clearIdb } from 'banyan-webcrypto/idb';
-import { DEFAULT_SALT_LENGTH } from 'banyan-webcrypto/constants';
+import ECCKeystore from 'banyan-webcrypto-experiment/ecc/keystore';
+import { clear as clearIdb } from 'banyan-webcrypto-experiment/idb';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 
@@ -109,7 +108,6 @@ export const TombProvider = ({ children }: any) => {
 		passkey: string
 	): Promise<void> => {
 		console.log('Initializing keystore');
-		console.log('using salt length: ' + DEFAULT_SALT_LENGTH);
 		if (privkeyData && !keystoreInitialized) {
 			console.log('Initializing keystore with recovered privkey data');
 			await initKeystore(session, privkeyData, passkey);

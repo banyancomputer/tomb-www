@@ -2237,8 +2237,10 @@ balanced-match@^1.0.0:
   resolved "https://registry.yarnpkg.com/balanced-match/-/balanced-match-1.0.2.tgz#e83e3a7e3f300b34cb9d87f615fa0cbf357690ee"
   integrity sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==
 
-"banyan-webcrypto@file:../keystore-idb":
+banyan-webcrypto-experiment@^0.16.0:
   version "0.16.0"
+  resolved "https://registry.yarnpkg.com/banyan-webcrypto-experiment/-/banyan-webcrypto-experiment-0.16.0.tgz#d00fa08c824dd6e6dbc7f1ada8eb9afac7c71b71"
+  integrity sha512-5jhFpmwtYqQqG4AwfZUOMFzPW9OAMfbRGSUJj5PWZ8Qn04+pojp7UG/vlOLLORIECshdQa7qmZgI2t1OLcf4Zg==
   dependencies:
     localforage "^1.10.0"
     one-webcrypto "^1.0.3"
@@ -2898,9 +2900,9 @@ ecdsa-sig-formatter@1.0.11, ecdsa-sig-formatter@^1.0.11:
     safe-buffer "^5.0.1"
 
 electron-to-chromium@^1.4.431:
-  version "1.4.460"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.460.tgz#f360a5059c039c4a5fb4dfa99680ad8129dd9f84"
-  integrity sha512-kKiHnbrHME7z8E6AYaw0ehyxY5+hdaRmeUbjBO22LZMdqTYCO29EvF0T1cQ3pJ1RN5fyMcHl1Lmcsdt9WWJpJQ==
+  version "1.4.461"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.461.tgz#6b14af66042732bf883ab63a4d82cac8f35eb252"
+  integrity sha512-1JkvV2sgEGTDXjdsaQCeSwYYuhLRphRpc+g6EHTFELJXEiznLt3/0pZ9JuAOQ5p2rI3YxKTbivtvajirIfhrEQ==
 
 emoji-regex@^8.0.0:
   version "8.0.0"
