@@ -9,6 +9,5 @@ const allowed_collection = Firestore.collection('allowed');
 export const read = async (email: string): Promise<boolean> => {
 	const docRef = allowed_collection.doc(email);
 	const snapshot = await docRef.get();
-	console.log(snapshot);
 	return snapshot.exists;
 };

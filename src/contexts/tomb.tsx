@@ -242,7 +242,6 @@ export const TombProvider = ({ children }: any) => {
 			setError('Keystore is invalid (signature)');
 			throw new Error('Keystore is invalid (signature)');
 		}
-		console.log('Keystore is valid');
 	};
 
 	return (
