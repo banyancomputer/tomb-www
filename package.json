@@ -14,7 +14,6 @@
 		"prettier": "prettier --write .",
 		"format": "prettier --write .",
 		"dev": "cross-env NODE_OPTIONS='--inspect' NODE_ENV='development' next dev",
-		"firebase": "firebase emulators:start --project default",
 		"prod": "cross-env NODE_ENV='production' next start"
 	},
 	"dependencies": {
@@ -33,7 +32,6 @@
 		"dashify": "^2.0.0",
 		"eslint": "8.36.0",
 		"eslint-config-next": "13.2.4",
-		"firebase-admin": "^11.9.0",
 		"framer-motion": "^10.8.5",
 		"next": "13.2.4",
 		"next-auth": "^4.22.1",
@@ -56,7 +54,6 @@
 		"autoprefixer": "^10.4.14",
 		"babel-eslint": "^10.1.0",
 		"cross-env": "^7.0.3",
-		"cypress": "^12.16.0",
 		"env-cmd": "^10.1.0",
 		"postcss": "^8.4.21",
 		"prettier": "^2.8.6",
