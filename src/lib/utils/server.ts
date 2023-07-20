@@ -12,7 +12,7 @@ export function passkey_salt_is_valid(salt: string): boolean {
 	return true;
 }
 
-export function enc_privkey_pkcs8_is_valid(enc_privkey: string): boolean {
+export function wrapped_privkey_pkcs8(wrapped_privkey: string): boolean {
 	// Return whether the encrypted private key is valid
 	// TODO: Implement this
 	return true;

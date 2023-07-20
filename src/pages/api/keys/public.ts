@@ -7,7 +7,8 @@ import { Session } from 'next-auth';
 
 /** pub key schema
  * <pubkey_fingerprint>: {
- *   spki: string,
+ *   ecdsa_spki: string,
+ *   ecdh_spki: string, 
  *   owner: string,
  * }
  */
@@ -27,14 +28,16 @@ async function validate_post(
 	if (
 		!(
 			data &&
-			data.spki &&
+			data.ecdh_spki &&
+			data.ecdsa_spki &&
 			data.owner &&
 			// Require that the fingerprint is valid
 			utils.pubkey_fingerprint_is_valid(id) &&
 			// Require that the owner of the public key is the user
 			data.owner === session.id &&
 			// Require that the spki is valid
-			utils.spki_is_valid(data.spki)
+			utils.spki_is_valid(data.ecdh_spki) &&
+			utils.spki_is_valid(data.ecdsa_spki)
 		)
 	) {
 		res.status(400); // Bad Request

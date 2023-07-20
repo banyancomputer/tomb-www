@@ -7,9 +7,10 @@ import { Session } from 'next-auth';
 
 /** priv key schema
  * <user_id>: {
- *   pubkey_fingerprint: string,
+ *   ecdsa_pubkey_fingerprint: string,
+ *   wrapped_ecdsa_privkey_pkcs8: string,
+ *   wrapped_pubkey_fingerprint: string,
  *   passkey_salt: string,
- *   enc_privkey_pkcs8: string,
  * }
  */
 
@@ -36,15 +37,17 @@ async function validate_post(
 	if (
 		!(
 			data &&
-			data.pubkey_fingerprint &&
+			data.ecdsa_pubkey_fingerprint &&
+			data.wrapped_ecdsa_privkey_pkcs8 &&
+			data.wrapped_ecdh_privkey_pkcs8 &&
 			data.passkey_salt &&
-			data.enc_privkey_pkcs8 &&
 			// Require that the fingerprint is valid
-			utils.pubkey_fingerprint_is_valid(data.pubkey_fingerprint) &&
+			utils.pubkey_fingerprint_is_valid(data.ecdsa_pubkey_fingerprint) &&
 			// Require that the salt is valid
 			utils.passkey_salt_is_valid(data.passkey_salt) &&
-			// Require that the encrypted private key is valid
-			utils.enc_privkey_pkcs8_is_valid(data.enc_privkey_pkcs8)
+			// Require that the encrypted private keys are valid
+			utils.wrapped_privkey_pkcs8(data.wrapped_ecdsa_privkey_pkcs8) &&
+			utils.wrapped_privkey_pkcs8(data.wrapped_ecdh_privkey_pkcs8)
 		)
 	) {
 		// Deny request
