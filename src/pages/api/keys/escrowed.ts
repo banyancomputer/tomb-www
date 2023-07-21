@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]';
-import { PublicKeyFactory } from '@/lib/db';
+import { EscrowedKeyFactory } from '@/lib/db';
 import { Session } from 'next-auth';
 
 export default async (req: NextApiRequest, res: NextApiResponse) => {
@@ -17,23 +17,23 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	if (req.method === 'POST') {
 		const data = req.body;
 		// Validate the request
-		let publicKeyData = { ...data };
-		let publicKey;
+		let escrowedKeyData = { ...data };
+		let escrowedKey;
 		try {
-			publicKey = await PublicKeyFactory.create(publicKeyData);
+			escrowedKey = await EscrowedKeyFactory.create(escrowedKeyData);
 		} catch (e) {
-			console.log('Error creating public key: ', e);
+			console.log('Error creating escrowed key: ', e);
 			res.status(500).send('internal server error'); // Bad Request
 			return;
 		}
-		console.log('Created public key: ', publicKey);
-		res.status(200).send(publicKey);
+		console.log('Created escrowed key: ', escrowedKey);
+		res.status(200).send(escrowedKey);
 	}
 
 	// Handle GET request
 	if (req.method === 'GET') {
-		const fingerprint = req.query.id as string;
-		const publicKey = await PublicKeyFactory.readByFingerprint(fingerprint);
-		res.status(200).send(publicKey);
+		const id = session.id;
+		const escrowedKey = await EscrowedKeyFactory.readByOwner(id);
+		res.status(200).send(escrowedKey);
 	}
 };

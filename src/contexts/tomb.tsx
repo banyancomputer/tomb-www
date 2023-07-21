@@ -1,8 +1,6 @@
 import { createContext, useState, useEffect, useContext } from 'react';
-import { PrivKeyData } from '@/interfaces/privkey';
-import { PubKeyData } from '@/interfaces/pubkey';
-import * as privkeyDb from '@/lib/client/db/privkey';
-import * as pubkeyDb from '@/lib/client/db/pubkey';
+import { IEscrowedKey, IPublicKey } from '@/lib/db/entities';
+import { EscrowedKeyApi, PublicKeyApi } from '@/lib/client/api';
 import ECCKeystore from 'banyan-webcrypto-experiment/ecc/keystore';
 import { clear as clearIdb } from 'banyan-webcrypto-experiment/idb';
 import { useSession } from 'next-auth/react';
@@ -52,7 +50,7 @@ export const TombProvider = ({ children }: any) => {
 
 	// Internal State
 	const [keystore, setKeystore] = useState<ECCKeystore | null>(null);
-	const [privkeyData, setPrivkeyData] = useState<PrivKeyData | null>(null);
+	const [escrowedKey, setEscrowedKey] = useState<IEscrowedKey | null>(null);
 	const [error, setError] = useState<string | null>(null);
 
 	/* Effects */
@@ -85,14 +83,12 @@ export const TombProvider = ({ children }: any) => {
 	// Set the isRegistered state if the user has an encrypted private key in the db
 	useEffect(() => {
 		const check = async (session: Session) => {
-			const { data } = await privkeyDb.read().catch((err) => {
-				setError('Failed to read privkey data: ' + err.message);
-				console.error(err);
-				return { data: null };
+			const escrowedKey = await EscrowedKeyApi.read().catch((err) => {
+				return undefined;
 			});
-			if (data) {
+			if (escrowedKey) {
 				setIsRegistered(true);
-				setPrivkeyData(data);
+				setEscrowedKey(escrowedKey);
 			}
 		};
 		if (session) {
@@ -108,9 +104,9 @@ export const TombProvider = ({ children }: any) => {
 		passkey: string
 	): Promise<void> => {
 		console.log('Initializing keystore');
-		if (privkeyData && !keystoreInitialized) {
-			console.log('Initializing keystore with recovered privkey data');
-			await initKeystore(session, privkeyData, passkey);
+		if (escrowedKey && !keystoreInitialized) {
+			console.log('Initializing keystore with recovered escrowed data');
+			await initKeystore(session, escrowedKey, passkey);
 		} else {
 			console.log('Registering user');
 			await registerUser(session, passkey);
@@ -169,28 +165,36 @@ export const TombProvider = ({ children }: any) => {
 		const wrapped_ecdsa_key_pair = await ks.exportEscrowedWriteKeyPair();
 
 		// Assoicate the public key in the db with the user
-		const pubkey_data: PubKeyData = { 
+		const publicKey: IPublicKey = {
+			ecdsa_fingerprint: await ks.fingerprintPublicWriteKey(),
 			ecdh_spki: wrapped_ecdh_key_pair.publicKeyStr,
 			ecdsa_spki: wrapped_ecdsa_key_pair.publicKeyStr,
-			owner
+			owner: owner,
 		};
+		await PublicKeyApi.create(publicKey).catch((err) => {
+			setError('Failed to create public key: ' + err.message);
+			console.error(err);
+			return undefined;
+		});
 
-		const ecdsa_pubkey_fingerprint = await ks.fingerprintPublicWriteKey(); 
-
-		await pubkeyDb.create(ecdsa_pubkey_fingerprint, pubkey_data);
 		// Create the user in the db with a reference to the pubkey and the encrypted private key
-		const privkey_data: PrivKeyData = {
-			ecdsa_pubkey_fingerprint,
-			wrapped_ecdsa_privkey_pkcs8: wrapped_ecdsa_key_pair.wrappedPrivateKeyStr,
-			wrapped_ecdh_privkey_pkcs8: wrapped_ecdh_key_pair.wrappedPrivateKeyStr,
-			passkey_salt,
+		const escrowedKey: IEscrowedKey = {
+			ecdsa_pubkey_fingerprint: publicKey.ecdsa_fingerprint,
+			wrapped_ecdsa_pkcs8: wrapped_ecdsa_key_pair.wrappedPrivateKeyStr,
+			wrapped_ecdh_pkcs8: wrapped_ecdh_key_pair.wrappedPrivateKeyStr,
+			passkey_salt: passkey_salt,
+			owner: owner,
 		};
-		await privkeyDb.create(privkey_data);
+		await EscrowedKeyApi.create(escrowedKey).catch((err) => {
+			setError('Failed to create escrowed key: ' + err.message);
+			console.error(err);
+			return undefined;
+		});
 	};
 
 	const initKeystore = async (
 		session: Session,
-		privkeyData: PrivKeyData,
+		escrowedKey: IEscrowedKey,
 		passphrase: string
 	) => {
 		// Get the keystore by the user's uid
@@ -206,30 +210,30 @@ export const TombProvider = ({ children }: any) => {
 		}
 
 		// Read the user's encrypted private key and salt and derive the passkey
-		const { ecdsa_pubkey_fingerprint, wrapped_ecdsa_privkey_pkcs8, wrapped_ecdh_privkey_pkcs8, passkey_salt } = privkeyData;
+		const {
+			ecdsa_pubkey_fingerprint,
+			wrapped_ecdsa_pkcs8,
+			wrapped_ecdh_pkcs8,
+			passkey_salt,
+		} = escrowedKey;
 
-		console.log(privkeyData);
 		await ks.deriveEscrowKey(passphrase, passkey_salt);
-		const pubkey = await pubkeyDb.read(ecdsa_pubkey_fingerprint);
-		const { ecdsa_spki, ecdh_spki } = pubkey.data;
+		const publicKey = await PublicKeyApi.read(ecdsa_pubkey_fingerprint);
+		const { ecdh_spki, ecdsa_spki } = publicKey;
 
 		// Import the keypair into the keystore
-		await ks.importEscrowedWriteKeyPair(
-			{
-				publicKeyStr: ecdsa_spki,
-				wrappedPrivateKeyStr: wrapped_ecdsa_privkey_pkcs8,
-			}
-		)
-		await ks.importEscrowedExchangeKeyPair(
-			{
-				publicKeyStr: ecdh_spki,
-				wrappedPrivateKeyStr: wrapped_ecdh_privkey_pkcs8,
-			}
-		)
+		await ks.importEscrowedWriteKeyPair({
+			publicKeyStr: ecdsa_spki,
+			wrappedPrivateKeyStr: wrapped_ecdsa_pkcs8,
+		});
+		await ks.importEscrowedExchangeKeyPair({
+			publicKeyStr: ecdh_spki,
+			wrappedPrivateKeyStr: wrapped_ecdh_pkcs8,
+		});
 
 		// Check that the keystore is valid
 		const msg = 'hello world';
-		
+
 		const ciphertext = await ks.encrypt(msg, ecdh_spki, passkey_salt);
 		const plaintext = await ks.decrypt(ciphertext, ecdh_spki, passkey_salt);
 		if (plaintext !== msg) {

@@ -16,7 +16,7 @@ services:
       NODE_ENV: development
       DB_HOST: db
       DB_PORT: 5432
-      DB_USER: postgres
+      DB_USERNAME: postgres
       DB_PASSWORD: postgres
       DB_NAME: postgres
     env_file:
@@ -31,11 +31,8 @@ services:
     ports:
       - '5432:5432'
     volumes:
-     - db:/var/lib/postgresql/data/
+      - db:/var/lib/postgresql/data/
 
 volumes:
   db:
     driver: local
-
-
-
