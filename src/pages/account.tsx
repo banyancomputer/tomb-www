@@ -8,6 +8,27 @@ import { Button, useDisclosure } from '@chakra-ui/react';
 import KeyCard from '@/components/cards/key/KeyCard';
 import { useSession } from 'next-auth/react';
 import Router from 'next/router';
+import { getServerSession } from 'next-auth';
+import { authOptions } from './api/auth/[...nextauth]';
+
+export async function getServerSideProps(context: any) {
+	// If the user has a session, serve the page
+	// @ts-ignore
+	const session = await getServerSession(context.req, context.res, authOptions);
+	if (session) {
+		return {
+			// Just return empty props for now, eventually we'll pass more data
+			props: { },
+		};
+  	}
+	// If no session, redirect to login
+	return {
+		redirect: {
+			destination: '/login',
+			permanent: false,
+		},
+	};
+}
 
 export interface IAccount {}
 

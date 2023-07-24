@@ -1,13 +1,14 @@
 import NextAuth from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
-import { FirestoreAdapter } from '@auth/firebase-adapter';
-import { Firestore } from '@/config/firebase-server';
-import * as allowedDb from '@/lib/server/db/allowed';
+import { TypeORMAdapter } from '@auth/typeorm-adapter';
+import { pgConnection, AllowedFactory } from '@/lib/db';
 
 export const authOptions = {
 	debug: process.env.NODE_ENV === 'development',
-	adapter: FirestoreAdapter(Firestore),
-	// Configure one or more authentication providers
+	adapter: TypeORMAdapter({
+		sychronize: process.env.NODE_ENV === 'development',
+		...pgConnection,
+	}),
 	providers: [
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID,
@@ -57,11 +58,12 @@ export const authOptions = {
 			// 	'\nProfile -> ',
 			// 	profile
 			// );
+			// isAllowed(profile.email).then((allowed) => {
+			// 	console.log('Allowed: ', allowed);
+			// });
 
-			return await allowedDb.read(profile.email).catch((error) => {
-				console.error('Error reading allowed list: ', error);
-				return false;
-			});
+			const allowed = await AllowedFactory.readByEmail(profile.email);
+			return !!allowed;
 		},
 	},
 };
