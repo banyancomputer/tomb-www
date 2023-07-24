@@ -8,12 +8,13 @@ export const AllowedFactory = {
 		});
 	},
 
-	createWithEmail: async (email: string) => {
-		const allowed = await AllowedFactory.build({ email: email });
+	create: async (attrs: Partial<Allowed> = {}) => {
+		const allowed = await AllowedFactory.build(attrs);
 		return await getApplicationDataSource().then((manager) => {
 			return manager.getRepository(Allowed).save(allowed);
 		});
 	},
+
 
 	readAll: async () => {
 		return await getApplicationDataSource().then((manager) => {

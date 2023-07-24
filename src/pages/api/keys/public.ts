@@ -16,17 +16,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	// Handle POST request
 	if (req.method === 'POST') {
 		const data = req.body;
-		// Validate the request
-		let publicKeyData = { ...data };
 		let publicKey;
 		try {
-			publicKey = await PublicKeyFactory.create(publicKeyData);
+			publicKey = await PublicKeyFactory.create(data);
 		} catch (e) {
 			console.log('Error creating public key: ', e);
 			res.status(500).send('internal server error'); // Bad Request
 			return;
 		}
-		console.log('Created public key: ', publicKey);
 		res.status(200).send(publicKey);
 	}
 

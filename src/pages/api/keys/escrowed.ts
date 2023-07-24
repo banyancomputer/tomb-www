@@ -16,17 +16,14 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
 	// Handle POST request
 	if (req.method === 'POST') {
 		const data = req.body;
-		// Validate the request
-		let escrowedKeyData = { ...data };
 		let escrowedKey;
 		try {
-			escrowedKey = await EscrowedKeyFactory.create(escrowedKeyData);
+			escrowedKey = await EscrowedKeyFactory.create(data);
 		} catch (e) {
 			console.log('Error creating escrowed key: ', e);
 			res.status(500).send('internal server error'); // Bad Request
 			return;
 		}
-		console.log('Created escrowed key: ', escrowedKey);
 		res.status(200).send(escrowedKey);
 	}
 
